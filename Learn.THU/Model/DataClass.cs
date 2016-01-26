@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Learn.THU.Model
+namespace LearnTHU.Model
 {
     class Course
     {

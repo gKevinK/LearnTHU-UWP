@@ -7,7 +7,7 @@
     <ProjectGuid>{91EE3F10-895C-4D8E-9F57-1879A5F799EC}</ProjectGuid>
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Learn.THU</RootNamespace>
+    <RootNamespace>LearnTHU</RootNamespace>
     <AssemblyName>Learn.THU</AssemblyName>
     <DefaultLanguage>zh-CN</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
