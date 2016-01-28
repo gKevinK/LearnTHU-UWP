@@ -103,6 +103,9 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Model\DataClass.cs" />
+    <Compile Include="Model\Merge.cs" />
+    <Compile Include="Model\Model.cs" />
+    <Compile Include="Model\Parse.cs" />
     <Compile Include="Model\Web.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

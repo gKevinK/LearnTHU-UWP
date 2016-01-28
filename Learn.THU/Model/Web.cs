@@ -71,13 +71,7 @@ namespace LearnTHU.Model
         {
             try
             {
-                string url1 = @"http://learn.cic.tsinghua.edu.cn/index";
-                HttpWebRequest req1 = (HttpWebRequest)WebRequest.Create(url1);
-                req1.CookieContainer = cc;
-                HttpWebResponse res1 = (HttpWebResponse)await req1.GetResponseAsync();
-                string html1 = await new StreamReader(res1.GetResponseStream()).ReadToEndAsync();
-                cc.Add(new Uri(@"http://learn.cic.tsinghua.edu.cn"), res1.Cookies);
-                res1.Dispose();
+                string html1 = await Request(@"http://learn.cic.tsinghua.edu.cn/index");
                 Regex reg = new Regex(@"method=""post"" action=(\S+?)>");
                 string url2 = reg.Match(html1).Groups[1].Value;
                 
@@ -116,6 +110,47 @@ namespace LearnTHU.Model
             Success, Failed, Error
         }
 
+        public async Task<List<Course>> GetCourseListOld()
+        {
+            string html = await Request("http://learn.tsinghua.edu.cn/MultiLanguage/lesson/student/MyCourse.jsp?language=cn");
+            return Parse.CourseListOld(html);
+        }
+
+        public async Task<List<Notice>> GetNoticeListOld(string courseId)
+        {
+            string url = string.Format(@"http://learn.tsinghua.edu.cn/MultiLanguage/public/bbs/getnoteid_student.jsp?course_id={0}", courseId);
+            string html = await Request(url);
+            return Parse.NoticeListOld(html);
+        }
+
+        public async Task<Notice> GetNoticeContentOld(string courseId, string noticeId)
+        {
+            string url = string.Format(@"http://learn.tsinghua.edu.cn/MultiLanguage/public/bbs/note_reply.jsp?bbs_type=课程公告&id={0}&course_id={1}", noticeId, courseId);
+            string html = await Request(url);
+            return Parse.NoticeOld(html);
+        }
+
+        public async Task<List<FileGroup>> GetFileGroupListOld(string courseId)
+        {
+            string url = string.Format(@"http://learn.tsinghua.edu.cn/MultiLanguage/lesson/student/download.jsp?course_id={0}", courseId);
+            string html = await Request(url);
+            return Parse.FileListOld(html);
+        }
+
+        public async Task<List<Work>> GetWorkListOld(string courseId)
+        {
+            string url = string.Format(@"http://learn.tsinghua.edu.cn/MultiLanguage/lesson/student/hom_wk_brw.jsp?course_id={0}", courseId);
+            string html = await Request(url);
+            return Parse.WorkListOld(html);
+        }
+
+
+
+        /// <summary>
+        /// 访问Url，获取返回数据
+        /// </summary>
+        /// <param name="url">Url</param>
+        /// <returns>返回数据</returns>
         public async Task<string> Request(string url)
         {
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
@@ -138,6 +173,11 @@ namespace LearnTHU.Model
             return html;
         }
 
+        /// <summary>
+        /// 从Stream中读取并返回字符串
+        /// </summary>
+        /// <param name="stream">输入流</param>
+        /// <returns>返回字符串</returns>
         private async Task<string> ReadAllAsync(Stream stream)
         {
             byte[] buf = new byte[4096];
