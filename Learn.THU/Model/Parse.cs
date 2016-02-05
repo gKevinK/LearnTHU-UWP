@@ -57,10 +57,6 @@ namespace LearnTHU.Model
         public static Notice NoticeOld(string html)
         {
             Notice notice = new Notice();
-            if (notice == null)
-            {
-                notice = new Notice();
-            }
             Regex regex = new Regex(@"hidden;"">([\s\S]*?)&nbsp;[\s]+</td>");
             string text = regex.Match(html).Groups[1].Value;
             text = Regex.Replace(text, "<[^>]+>", "");
@@ -86,10 +82,6 @@ namespace LearnTHU.Model
 .+center"">(.+)</td>
 .+center"">(.+)</td>
 .+center'>([\s\S]+?)</td>");
-//                reg3 = new Regex(@"<a target=""_top"" href=""(.+?)"" >
-//(.+)
-//[\s\S]+?center"">(.*)</td>
-//.+center"">(.+)</td>");
                 foreach (Match m in reg3.Matches(match2.Groups[1].Value))
                 {
                     fg.Files.Add(new File()
@@ -98,8 +90,8 @@ namespace LearnTHU.Model
                         Name = m.Groups[2].Value.Trim(),
                         Note = m.Groups[3].Value,
                         FileSize = FileSize(m.Groups[4].Value),
-                        //UploadDate = DateTime.Parse(m.Groups[5].Value),
-                        //Status = m.Groups[6].Value.Contains("新文件") ? File.FileStatus.Undownload : File.FileStatus.Downloaded,
+                        UploadDate = DateTime.Parse(m.Groups[5].Value),
+                        Status = m.Groups[6].Value.Contains("新文件") ? File.FileStatus.Undownload : File.FileStatus.Downloaded,
                     });
                 }
                 fileGroupList.Add(fg);

@@ -62,7 +62,6 @@ namespace LearnTHU.Model
 
     public class File
     {
-        public string Id { get; set; }
         public string Name { get; set; }
         public string Note { get; set; }
         public DateTime UploadDate { get; set; }
