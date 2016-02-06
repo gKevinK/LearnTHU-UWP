@@ -13,7 +13,7 @@
             <ColumnDefinition></ColumnDefinition>
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <ListBox Name="listbox">
+        <ListBox Name="listbox" Grid.Column="2">
 
         </ListBox>
 
