@@ -130,7 +130,7 @@ namespace LearnTHU.Model
             return Parse.NoticeOld(html);
         }
 
-        public async Task<List<FileGroup>> GetFileGroupListOld(string courseId)
+        public async Task<List<File>> GetFileGroupListOld(string courseId)
         {
             string url = string.Format(@"http://learn.tsinghua.edu.cn/MultiLanguage/lesson/student/download.jsp?course_id={0}", courseId);
             string html = await Request(url);

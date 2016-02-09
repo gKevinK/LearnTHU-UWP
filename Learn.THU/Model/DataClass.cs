@@ -14,7 +14,7 @@ namespace LearnTHU.Model
         public bool IsActive { get; set; }
 
         public List<Notice> NoticeList { get; set; }
-        public List<FileGroup> FileGroupList { get; set; }
+        public List<File> FileList { get; set; }
         public List<Work> WorkList { get; set; }
 
         private int nwc;
@@ -26,8 +26,8 @@ namespace LearnTHU.Model
         private int nfc;
         public int NewFileCount
         {
-            get { return (FileGroupList == null) ?
-                    nfc : FileGroupList.Sum(group => group.Files.Count(file => file.Status == File.FileStatus.Undownload)); }
+            get { return (FileList == null) ?
+                    nfc : FileList.Count(file => file.Status == File.FileStatus.Undownload); }
         }
 
         private int uwc;
@@ -54,17 +54,12 @@ namespace LearnTHU.Model
         public string Content { get; set; }
     }
 
-    public class FileGroup
-    {
-        public List<File> Files { get; set; }
-        public string GroupName { get; set; }
-    }
-
     public class File
     {
         public string Name { get; set; }
         public string Note { get; set; }
         public DateTime UploadDate { get; set; }
+        public string GroupName { get; set; }
         public double FileSize { get; set; }
         public string FileName { get; set; }
         public string Url { get; set; }

@@ -5,9 +5,17 @@
     xmlns:local="using:LearnTHU"
     RequestedTheme="Light">
     <Application.Resources>
-        <Flyout x:Key="FlyoutLogin">
-            <Grid Height="100" Width="100"/>
-        </Flyout>
+        <Style x:Key="splitViewToggleButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+            <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}" />
+            <Setter Property="Content" Value="&#xE700;" />
+            <Setter Property="FontSize" Value="20" />
+            <Setter Property="Height" Value="48" />
+            <Setter Property="Width" Value="48" />
+        </Style>
     </Application.Resources>
 
 </Application>

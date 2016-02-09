@@ -8,11 +8,26 @@ using Windows.Storage;
 
 namespace LearnTHU.Model
 {
-    class Model
+    class MainModel
     {
-        public List<Course> CourseList { get; set; }
+        public static List<Course> CourseList { get; set; }
 
-        Web web = new Web();
+        static Web web;
+
+        public MainModel()
+        {
+            if (web == null)
+                web = new Web();
+            if (CourseList == null)
+                CourseList = new List<Course>();
+        }
+
+        public MainModel(Web web2)
+        {
+            if (CourseList == null)
+                CourseList = new List<Course>();
+            web = web2;
+        }
 
         public async Task<RefreshResult> RefreshAllData()
         {

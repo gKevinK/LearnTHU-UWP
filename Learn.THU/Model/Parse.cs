@@ -65,9 +65,9 @@ namespace LearnTHU.Model
             return notice;
         }
 
-        public static List<FileGroup> FileListOld(string html)
+        public static List<File> FileListOld(string html)
         {
-            List<FileGroup> fileGroupList = new List<FileGroup>();
+            List<File> fileList = new List<File>();
             Regex reg1 = new Regex(@"height=""26""  onClick=[\s\S]+?>(.+?)</td>");
             Regex reg2 = new Regex(@"<div class=""layerbox""([\s\S]+?)</div>");
             int groupCount = reg1.Matches(html).Count;
@@ -75,7 +75,7 @@ namespace LearnTHU.Model
             {
                 Match match1 = reg1.Matches(html)[i];
                 Match match2 = reg2.Matches(html)[i];
-                FileGroup fg = new FileGroup() { GroupName = match1.Groups[1].Value, Files = new List<File>() };
+                string groupName = match1.Groups[1].Value;
                 Regex reg3 = new Regex(@"<a target=""_top"" href=""(.+?)"" >
 (.+)
 [\s\S]+?center"">(.*)</td>
@@ -84,19 +84,19 @@ namespace LearnTHU.Model
 .+center'>([\s\S]+?)</td>");
                 foreach (Match m in reg3.Matches(match2.Groups[1].Value))
                 {
-                    fg.Files.Add(new File()
+                    fileList.Add(new File()
                     {
                         Url = @"http://learn.tsinghua.edu.cn" + m.Groups[1].Value,
                         Name = m.Groups[2].Value.Trim(),
                         Note = m.Groups[3].Value,
+                        GroupName = groupName,
                         FileSize = FileSize(m.Groups[4].Value),
                         UploadDate = DateTime.Parse(m.Groups[5].Value),
                         Status = m.Groups[6].Value.Contains("新文件") ? File.FileStatus.Undownload : File.FileStatus.Downloaded,
                     });
                 }
-                fileGroupList.Add(fg);
             }
-            return fileGroupList;
+            return fileList;
         }
 
         public static List<Work> WorkListOld(string html)
