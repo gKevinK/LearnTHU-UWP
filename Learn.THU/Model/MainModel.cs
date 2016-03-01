@@ -10,23 +10,34 @@ namespace LearnTHU.Model
 {
     class MainModel
     {
-        public static List<Course> CourseList { get; set; }
+        public List<Course> CourseList { get; set; }
+        private DateTime lastRefreshTime = new DateTime(2000, 1, 1);
 
-        static Web web;
+        Web web;
+
+        public static MainModel Current { get; private set; }
 
         public MainModel()
         {
+            if (Current != null)
+                return;
             if (web == null)
                 web = new Web();
             if (CourseList == null)
                 CourseList = new List<Course>();
+            Current = this;
         }
 
         public MainModel(Web web2)
         {
+            if (Current != null)
+            {
+                Current.web = web2;
+            }
             if (CourseList == null)
                 CourseList = new List<Course>();
             web = web2;
+            Current = this;
         }
 
         public async Task<RefreshResult> RefreshAllData()
@@ -37,14 +48,30 @@ namespace LearnTHU.Model
 
         public async Task<RefreshResult> RefreshCourseList()
         {
-            // TODO
-            return RefreshResult.Success;
+            try
+            {
+                var newList = await web.GetCourseListOld();
+                //Merge.CourseList(CourseList, newList);
+                CourseList = newList;
+                lastRefreshTime = DateTime.Now;
+                return RefreshResult.Success;
+            }
+            catch
+            {
+                return RefreshResult.Error;
+            }
         }
 
         public async Task<RefreshResult> RefreshCourse(string courseId)
         {
-            // TODO
-            return RefreshResult.Success;
+            try
+            {
+                return RefreshResult.Success;
+            }
+            catch
+            {
+                return RefreshResult.Error;
+            }
         }
 
         public async Task<bool> Serialize()
@@ -89,26 +116,33 @@ namespace LearnTHU.Model
         {
             if (CourseList == null)
             {
-               CourseList = await web.GetCourseListOld();
+                CourseList = await web.GetCourseListOld();
+                lastRefreshTime = DateTime.Now;
+                return CourseList;
+            }
+            if (DateTime.Now - lastRefreshTime > new TimeSpan(2, 0, 0))
+            {
+                await RefreshCourseList();
             }
             return CourseList;
         }
 
         public async Task<List<Notice>> GetNoticeList(string courseId)
         {
-            if (CourseList == null)
-            {
-                CourseList = await web.GetCourseListOld();
-            }
+            //if (CourseList == null)
+            //{
+            //    CourseList = await web.GetCourseListOld();
+            //}
             Course course = CourseList.Find(c => c.Id == courseId);
             if (course == null)
             {
                 throw new Exception("No record of this course.");
             }
             List<Notice> list = course.NoticeList;
-            if (list == null)
+            if (list == null || course.NeedRefresh || DateTime.Now - course.RefreshTime > new TimeSpan(2, 0, 0))
             {
                 course.NoticeList = await web.GetNoticeListOld(course.Id);
+                // TODO Merge
                 list = course.NoticeList;
             }
             return list;

@@ -37,7 +37,7 @@ namespace LearnTHU.View
             try
             {
                 var web = new Web();
-                var result = await web.LoginOldAsync(UserID.Text, Passwd.Password);
+                var result = await web.Login(UserID.Text, Passwd.Password);
                 if (result == Web.LoginResult.Success)
                 {
                     var vault = new Windows.Security.Credentials.PasswordVault();

@@ -24,10 +24,44 @@ namespace LearnTHU.View
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        MainViewModel VM { get; set; } = new MainViewModel();
+
         public MainPage()
         {
             this.InitializeComponent();
-            DataContext = new MainViewModel();
+
+            this.Loaded += SetCourseList;
+        }
+
+        private async void SetCourseList(object sender, RoutedEventArgs e)
+        {
+            await VM.GetCourseList();
+        }
+
+        private void splitViewToggle_Click(object sender, RoutedEventArgs e)
+        {
+            splitView.IsPaneOpen = !splitView.IsPaneOpen;
+            NavListView.Visibility = splitView.IsPaneOpen ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private async void NavListView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            CourseVM item = e.ClickedItem as CourseVM;
+            if (MainFrame.SourcePageType != typeof(CoursePage))
+            {
+                MainFrame.Navigate(typeof(CoursePage), item.Id);
+            }
+            else
+            {
+                CoursePage.Current.NavTo(item.Id);
+            }
+        }
+
+        private void SettingBtn_Click(object sender, RoutedEventArgs e)
+        {
+            MainFrame.Navigate(typeof(Setting));
         }
     }
+
+    
 }

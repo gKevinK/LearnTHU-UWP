@@ -20,9 +20,9 @@ namespace LearnTHU.View
     /// <summary>
     /// 可用于自身或导航至 Frame 内部的空白页。
     /// </summary>
-    public sealed partial class About : Page
+    public sealed partial class Setting : Page
     {
-        public About()
+        public Setting()
         {
             InitializeComponent();
         }

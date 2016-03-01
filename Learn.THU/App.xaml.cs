@@ -76,7 +76,8 @@ namespace LearnTHU
                 // 并通过将所需信息作为导航参数传入来配置
                 // 参数
                 var vault = new Windows.Security.Credentials.PasswordVault();
-                if (vault.RetrieveAll().Count == 0)
+                //vault.Remove(new Windows.Security.Credentials.PasswordCredential("LearnTHU", "2013010155", string.Empty));
+                if (vault.RetrieveAll().Count == 0 || vault.FindAllByResource("LearnTHU")[0].Password == "")
                 {
                     rootFrame.Navigate(typeof(View.Login), e.Arguments);
                 }

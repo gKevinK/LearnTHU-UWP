@@ -12,8 +12,8 @@ namespace LearnTHU.Model
         public static List<Course> CourseListOld(string html)
         {
             List<Course> courseList = new List<Course>();
-            string pattern = @"course_id=([0-9]+)"" target=""_blank"">
-(.*)\(.+?\)</a>.+
+            string pattern = @"href=""(.+)"" target=""_blank"">
+(.*)\(.+?\)\(.+?\)</a>.+
 .+text"">(.+)</span>.+
 .+text"">(.+)</span>.+
 .+text"">(.+)</span>";
@@ -22,11 +22,20 @@ namespace LearnTHU.Model
             {
                 Course course = new Course()
                 {
-                    Id = match.Groups[1].Value,
-                    Name = match.Groups[2].Value.Trim(),
-                    IsNewWebLearning = false,
-                    IsActive = true,
+                    Name = match.Groups[2].Value.Trim(), IsActive = true, NeedRefresh = true,
                 };
+                string link = match.Groups[1].Value;
+                if (link.Contains("course_id"))
+                {
+                    course.Id = link.Substring(link.Length - 6);
+                    course.IsNewWebLearning = false;
+                }
+                else
+                {
+                    course.Id = link.Substring(link.Length - 22);
+                    course.IsNewWebLearning = true;
+                }
+                
                 course.InitNewCount(int.Parse(match.Groups[4].Value),
                     int.Parse(match.Groups[5].Value), int.Parse(match.Groups[3].Value));
                 courseList.Add(course);
@@ -59,8 +68,8 @@ namespace LearnTHU.Model
             Notice notice = new Notice();
             Regex regex = new Regex(@"hidden;"">([\s\S]*?)&nbsp;[\s]+</td>");
             string text = regex.Match(html).Groups[1].Value;
-            text = Regex.Replace(text, "<[^>]+>", "");
-            text = WebUtility.HtmlDecode(text);
+            // text = Regex.Replace(text, "<[^>]+>", "");
+            // text = WebUtility.HtmlDecode(text);
             notice.Content = text;
             return notice;
         }

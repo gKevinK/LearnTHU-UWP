@@ -8,5 +8,12 @@ namespace LearnTHU.Model
 {
     class Merge
     {
+        public static void CourseList(List<Course> oldList, List<Course> newList)
+        {
+            foreach (Course c in newList)
+            {
+
+            }
+        }
     }
 }

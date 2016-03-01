@@ -24,7 +24,7 @@ namespace LearnTHU.Model
         /// <param name="userId">用户名</param>
         /// <param name="userPwd">密码</param>
         /// <returns>登录结果</returns>
-        public async Task<LoginResult> LoginOldAsync(string userId, string userPwd)
+        public async Task<LoginResult> Login(string userId, string userPwd)
         {
             string url1 = @"https://learn.tsinghua.edu.cn/MultiLanguage/lesson/teacher/loginteacher.jsp";
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url1);
@@ -53,6 +53,8 @@ namespace LearnTHU.Model
                 }
                 cc.Add(new Uri(@"https://learn.tsinghua.edu.cn"), response.Cookies);
                 response.Dispose();
+                
+                await SetNewSession();
             }
             catch
             {
@@ -61,20 +63,28 @@ namespace LearnTHU.Model
             return LoginResult.Success;
         }
 
+        private async Task SetNewSession()
+        {
+            string coursesHtml = await Request(@"http://learn.tsinghua.edu.cn/MultiLanguage/lesson/student/MyCourse.jsp?language=cn");
+            Regex regex = new Regex(@"<iframe src=(.+) height");
+            string url = regex.Match(coursesHtml).Groups[1].Value;
+            Request(url);
+        }
+
         /// <summary>
         /// 登录新版网络学堂，获取Cookie
         /// </summary>
         /// <param name="userId">用户名</param>
         /// <param name="userPwd">密码</param>
         /// <returns>登录结果</returns>
-        public async Task<LoginResult> LoginNewAsync(string userId, string userPwd)
+        public async Task<LoginResult> LoginNew(string userId, string userPwd)
         {
             try
             {
                 string html1 = await Request(@"http://learn.cic.tsinghua.edu.cn/index");
                 Regex reg = new Regex(@"method=""post"" action=(\S+?)>");
                 string url2 = reg.Match(html1).Groups[1].Value;
-                
+
                 HttpClientHandler hch = new HttpClientHandler();
                 hch.AllowAutoRedirect = false;
                 hch.CookieContainer = cc;
@@ -123,6 +133,12 @@ namespace LearnTHU.Model
             return Parse.NoticeListOld(html);
         }
 
+        public async Task<List<Notice>> GetNoticeListNew(string courseId)
+        {
+            string url = string.Format(@"");
+            return new List<Notice>();
+        }
+
         public async Task<Notice> GetNoticeContentOld(string courseId, string noticeId)
         {
             string url = string.Format(@"http://learn.tsinghua.edu.cn/MultiLanguage/public/bbs/note_reply.jsp?bbs_type=课程公告&id={0}&course_id={1}", noticeId, courseId);
@@ -130,7 +146,7 @@ namespace LearnTHU.Model
             return Parse.NoticeOld(html);
         }
 
-        public async Task<List<File>> GetFileGroupListOld(string courseId)
+        public async Task<List<File>> GetFileListOld(string courseId)
         {
             string url = string.Format(@"http://learn.tsinghua.edu.cn/MultiLanguage/lesson/student/download.jsp?course_id={0}", courseId);
             string html = await Request(url);
@@ -156,6 +172,33 @@ namespace LearnTHU.Model
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
             req.CookieContainer = cc;
             HttpWebResponse res = (HttpWebResponse)await req.GetResponseAsync();
+            if (res.StatusCode == HttpStatusCode.BadGateway || res.StatusCode == HttpStatusCode.InternalServerError
+                || res.ContentLength == 0)
+            {
+                var vault = new Windows.Security.Credentials.PasswordVault();
+                var va = vault.FindAllByResource("LearnTHU");
+                string userId = vault.FindAllByResource("LearnTHU")[0].UserName;
+                string passwd = vault.FindAllByResource("LearnTHU")[0].Password;
+                LoginResult result;
+                if (url.Contains("learn.cic"))
+                {
+                    result = await LoginNew(userId, passwd);
+                }
+                else
+                {
+                    result = await Login(userId, passwd);
+                }
+                if (result == LoginResult.Success)
+                {
+                    req = (HttpWebRequest)WebRequest.Create(url);
+                    req.CookieContainer = cc;
+                    res = (HttpWebResponse)await req.GetResponseAsync();
+                }
+                else
+                {
+                    throw new Exception("登录失败");
+                }
+            }
             string html;
             if (res.ContentLength == -1)
             {

@@ -1,0 +1,68 @@
+﻿<Page
+    x:Class="LearnTHU.View.CoursePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:LearnTHU.View"
+    xmlns:vm="using:LearnTHU.ViewModel"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <DataTemplate x:Key="NoticeItemTemplate" x:DataType="vm:NoticeVM">
+            <Grid Height="48" Width="{Binding ActualWidth, ElementName=noticeList, Mode=OneWay}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="32"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="160"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Ellipse Height="12" Width="12" Fill="Red" HorizontalAlignment="Left" Visibility="{x:Bind IsRead}"></Ellipse>
+                <TextBlock Grid.Column="1" VerticalAlignment="Center" FontSize="18" TextTrimming="CharacterEllipsis"
+                           Text="{x:Bind Title}"></TextBlock>
+                <TextBlock Grid.Column="2" VerticalAlignment="Center" Text="{x:Bind Date}" FontSize="18"></TextBlock>
+            </Grid>
+        </DataTemplate>
+        <!--<Style x:Key="NoticeItemStyle" TargetType="ListViewItem">
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+        </Style>-->
+    </Page.Resources>
+    
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="48"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock x:Name="TitleName" Text="{x:Bind VM.CourseName, Mode=OneWay}"
+                   FontSize="24" VerticalAlignment="Center" FontWeight="Bold" Padding="16,0"></TextBlock>
+
+        <Pivot x:Name="listPivot" Grid.Row="2">
+            <PivotItem x:Name="noticePivotItem" Header="公告">
+                <ListView x:Name="noticeList"
+                          ItemTemplate="{StaticResource NoticeItemTemplate}"
+                          ItemsSource="{x:Bind VM.NoticeList, Mode=OneWay}"
+                          ItemClick="noticeList_ItemClick">
+                </ListView>
+            </PivotItem>
+            <PivotItem x:Name="filePivotItem" Header="文件">
+                <ListView x:Name="fileList">
+                    
+                </ListView>
+            </PivotItem>
+            <PivotItem Header="作业">
+                
+            </PivotItem>
+        </Pivot>
+
+        <ContentControl x:Name="detailControl" Grid.Column="1" Grid.Row="1">
+            <Grid>
+                <TextBlock Text="{x:Bind VM.CurrentNotice.Title, Mode=OneWay}"></TextBlock>
+            </Grid>
+            
+        </ContentControl>
+    </Grid>
+</Page>

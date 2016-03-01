@@ -3,23 +3,102 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:LearnTHU.View"
+    xmlns:vm="using:LearnTHU.ViewModel"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <DataTemplate x:Key="NavMenuItemTemplate" x:DataType="vm:CourseVM">
+            <Grid Height="40" Width="320">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="48"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="36"/>
+                    <ColumnDefinition Width="36"/>
+                    <ColumnDefinition Width="36"/>
+                </Grid.ColumnDefinitions>
+                <SymbolIcon Symbol="Play" ToolTipService.ToolTip="{x:Bind Label}"/>
+                <TextBlock x:Name="Text" Grid.Column="1" Text="{x:Bind Label}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                <Button x:Name="NewNotice" Grid.Column="2" Content="{x:Bind NewNotice}" Style="{ThemeResource courseNumberStyle}"/>
+                <Button x:Name="NewFile" Grid.Column="3" Content="{x:Bind NewFile}" Style="{ThemeResource courseNumberStyle}"/>
+                <Button x:Name="NewWork" Grid.Column="4" Content="{x:Bind NewWork}" Style="{ThemeResource courseNumberStyle}"/>
+            </Grid>
+        </DataTemplate>
+        <Style x:Key="NavMenuItemContainerStyle" TargetType="ListViewItem">
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="MinHeight" Value="40" />
+        </Style>
+
+        <Style x:Key="courseNumberStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Height" Value="40" />
+            <Setter Property="Width" Value="32" />
+        </Style>
+    </Page.Resources>
+
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"></RowDefinition>
+        <!--<Grid.RowDefinitions>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"></ColumnDefinition>
             <ColumnDefinition Width="*"></ColumnDefinition>
-        </Grid.ColumnDefinitions>
+        </Grid.ColumnDefinitions>-->
 
-        <Button x:Name="splitViewToggle" Style="{ThemeResource splitViewToggleButtonStyle}"/>
+        <Button x:Name="splitViewToggle" Style="{ThemeResource splitViewToggleButtonStyle}" Click="splitViewToggle_Click"/>
+        <SplitView x:Name="splitView" DisplayMode="CompactInline" IsPaneOpen="True">
+            <SplitView.Pane>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="48"></RowDefinition>
+                        <RowDefinition Height="*"></RowDefinition>
+                        <RowDefinition Height="48"></RowDefinition>
+                    </Grid.RowDefinitions>
+
+                    <Button x:Name="splitViewToggle2" Style="{ThemeResource splitViewToggleButtonStyle}" Click="splitViewToggle_Click"/>
+                    <ListView x:Name="NavListView" Grid.Row="1" SelectionMode="None" IsItemClickEnabled="True"
+                              ItemsSource="{x:Bind VM.Courses, Mode=OneWay}"
+                              ItemTemplate="{StaticResource NavMenuItemTemplate}"
+                              ItemContainerStyle="{StaticResource NavMenuItemContainerStyle}"
+                              ItemClick="NavListView_ItemClick">
+                        <ListView.Header>
+                            <Grid Width="320" Height="40">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="48"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="36"/>
+                                    <ColumnDefinition Width="36"/>
+                                    <ColumnDefinition Width="36"/>
+                                </Grid.ColumnDefinitions>
+                                <SymbolIcon Symbol="List" />
+                                <TextBlock Grid.Column="1" Text="课程名称" VerticalAlignment="Center" />
+                                <TextBlock Grid.Column="2" Text="公告" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="3" Text="文件" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="4" Text="作业" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Grid>
+                        </ListView.Header>
+                    </ListView>
+                    <ListView ItemClick="SettingBtn_Click" Grid.Row="2" SelectionMode="None" IsItemClickEnabled="True"
+                              ItemContainerStyle="{StaticResource NavMenuItemContainerStyle}">
+                        <ListView.Items>
+                            <ListViewItem>
+                                <Grid Height="48" Width="320">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="48"></ColumnDefinition>
+                                        <ColumnDefinition></ColumnDefinition>
+                                    </Grid.ColumnDefinitions>
+                                    <SymbolIcon Symbol="Setting"></SymbolIcon>
+                                    <TextBlock Text="设置" Grid.Column="1" VerticalAlignment="Center"></TextBlock>
+                                </Grid>
+                            </ListViewItem>
+                        </ListView.Items>
+                    </ListView>
+                </Grid>
+            </SplitView.Pane>
+            <Frame x:Name="MainFrame"/>
+        </SplitView>
         
-        <Frame x:Name="frame"/>
-        <!--<Image Source="/Assets/StoreLogo.png"/>-->
     </Grid>
 </Page>

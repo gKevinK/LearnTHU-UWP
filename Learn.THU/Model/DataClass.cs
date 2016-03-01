@@ -12,28 +12,32 @@ namespace LearnTHU.Model
         public string Name { get; set; }
         public bool IsNewWebLearning { get; set; }
         public bool IsActive { get; set; }
+        public bool NeedRefresh { get; set; }
+        public DateTime RefreshTime { get; set; }
 
-        public List<Notice> NoticeList { get; set; }
-        public List<File> FileList { get; set; }
-        public List<Work> WorkList { get; set; }
+        public List<Notice> NoticeList { get; set; } = new List<Notice>();
+        public List<File> FileList { get; set; } = new List<File>();
+        public List<Work> WorkList { get; set; } = new List<Work>();
 
         private int nwc;
         public int NewNoticeCount
         {
-            get { return (NoticeList == null) ? nwc : NoticeList.Count(notice => notice.IsRead == false); }
+            get { return (NeedRefresh) ? nwc : NoticeList.Count(notice => notice.IsRead == false); }
         }
 
         private int nfc;
         public int NewFileCount
         {
-            get { return (FileList == null) ?
+            get { return (NeedRefresh) ?
                     nfc : FileList.Count(file => file.Status == File.FileStatus.Undownload); }
         }
 
         private int uwc;
         public int UnhandWorkCount
         {
-            get { return (WorkList == null) ? uwc : WorkList.Count(work => work.Status == Work.WorkStatus.Unhand); }
+            get { return (NeedRefresh) ?
+                    uwc - WorkList.Count(work => work.Status == Work.WorkStatus.Ignored) :
+                    WorkList.Count(work => work.Status == Work.WorkStatus.Unhand); }
         }
 
         public void InitNewCount(int newNotice, int newFile, int unhandWork)
@@ -66,7 +70,7 @@ namespace LearnTHU.Model
 
         public enum FileStatus
         {
-            Undownload, Downloaded, Removed
+            Undownload, Downloaded, Removed, Ignored
         }
         public FileStatus Status { get; set; }
     }
