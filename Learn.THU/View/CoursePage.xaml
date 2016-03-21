@@ -10,20 +10,54 @@
 
     <Page.Resources>
         <DataTemplate x:Key="NoticeItemTemplate" x:DataType="vm:NoticeVM">
-            <Grid Height="48" Width="{Binding ActualWidth, ElementName=noticeList, Mode=OneWay}">
+            <Grid Height="48" >
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="32"></ColumnDefinition>
+                    <ColumnDefinition Width="24"></ColumnDefinition>
                     <ColumnDefinition Width="*"></ColumnDefinition>
-                    <ColumnDefinition Width="160"></ColumnDefinition>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
-                <Ellipse Height="12" Width="12" Fill="Red" HorizontalAlignment="Left" Visibility="{x:Bind IsRead}"></Ellipse>
-                <TextBlock Grid.Column="1" VerticalAlignment="Center" FontSize="18" TextTrimming="CharacterEllipsis"
+                <Ellipse Height="10" Width="10" Fill="Red" HorizontalAlignment="Left" Visibility="{x:Bind IsRead}"></Ellipse>
+                <TextBlock Grid.Column="1" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
                            Text="{x:Bind Title}"></TextBlock>
-                <TextBlock Grid.Column="2" VerticalAlignment="Center" Text="{x:Bind Date}" FontSize="18"></TextBlock>
+                <TextBlock Grid.Column="2" VerticalAlignment="Center" Foreground="Blue" FontSize="12" Text="{x:Bind Date}"></TextBlock>
             </Grid>
         </DataTemplate>
+
+        <DataTemplate x:Key="DetailContentTemplate" x:DataType="vm:NoticeVM">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="48"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="48"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Button x:Name="BackBtn" Click="BackBtn_Click" Background="Transparent" Width="48" Height="48">
+                        <SymbolIcon Symbol="Forward"></SymbolIcon>
+                </Button>
+                <TextBlock Grid.Column="1" Grid.ColumnSpan="3" FontSize="18" FontWeight="SemiBold" Padding="16,0"
+                           Text="{x:Bind Title}" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" >
+                    <TextBlock Text="发布者：" VerticalAlignment="Center" Padding="12,0,0,0" ></TextBlock>
+                    <TextBlock VerticalAlignment="Center"
+                               Text="{x:Bind Publisher}"></TextBlock>
+                </StackPanel>
+                <StackPanel Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Orientation="Horizontal">
+                    <TextBlock Text="发布日期：" Grid.Column="2" VerticalAlignment="Center" Padding="12,0,0,0"></TextBlock>
+                    <TextBlock VerticalAlignment="Center"
+                               Text="{x:Bind Date}"></TextBlock>
+                </StackPanel>
+                <RichTextBlock Grid.Row="3" Grid.ColumnSpan="4"></RichTextBlock>
+            </Grid>
+        </DataTemplate>
+        
         <!--<Style x:Key="NoticeItemStyle" TargetType="ListViewItem">
             <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="Padding" Value="0" />
         </Style>-->
     </Page.Resources>
     
@@ -34,18 +68,25 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"></ColumnDefinition>
-            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="320"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
         <TextBlock x:Name="TitleName" Text="{x:Bind VM.CourseName, Mode=OneWay}"
-                   FontSize="24" VerticalAlignment="Center" FontWeight="Bold" Padding="16,0"></TextBlock>
+                   FontSize="24" VerticalAlignment="Center" Padding="16,0" FontWeight="Medium"/>
 
         <Pivot x:Name="listPivot" Grid.Row="2">
             <PivotItem x:Name="noticePivotItem" Header="公告">
-                <ListView x:Name="noticeList"
+                <ListView x:Name="noticeList" IsItemClickEnabled="True"
                           ItemTemplate="{StaticResource NoticeItemTemplate}"
                           ItemsSource="{x:Bind VM.NoticeList, Mode=OneWay}"
                           ItemClick="noticeList_ItemClick">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="BorderThickness" Value="0,1,0,0" />
+                            <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseLowBrush}" />
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        </Style>
+                    </ListView.ItemContainerStyle>
                 </ListView>
             </PivotItem>
             <PivotItem x:Name="filePivotItem" Header="文件">
@@ -58,11 +99,16 @@
             </PivotItem>
         </Pivot>
 
-        <ContentControl x:Name="detailControl" Grid.Column="1" Grid.Row="1">
-            <Grid>
-                <TextBlock Text="{x:Bind VM.CurrentNotice.Title, Mode=OneWay}"></TextBlock>
-            </Grid>
-            
-        </ContentControl>
+        <ContentPresenter x:Name="detailControl" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch"
+                          BorderThickness="1,0,0,0" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                          ContentTemplate="{StaticResource DetailContentTemplate}"
+                          Content="{x:Bind VM.NoticeDetail, Mode=OneWay}" VerticalAlignment="Stretch">
+            <ContentPresenter.ContentTransitions>
+                <TransitionCollection>
+                    <EntranceThemeTransition FromHorizontalOffset="20"></EntranceThemeTransition>
+                </TransitionCollection>
+            </ContentPresenter.ContentTransitions>
+        </ContentPresenter>
+        <!--<ContentControl x:Name="detailControl"></ContentControl>-->
     </Grid>
 </Page>

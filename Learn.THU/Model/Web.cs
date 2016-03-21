@@ -135,8 +135,9 @@ namespace LearnTHU.Model
 
         public async Task<List<Notice>> GetNoticeListNew(string courseId)
         {
-            string url = string.Format(@"");
-            return new List<Notice>();
+            string url = string.Format(@"http://learn.cic.tsinghua.edu.cn/b/myCourse/notice/listForStudent/{0}?currentPage=1&pageSize=100", courseId);
+            string json = await Request(url);
+            return Parse.NoticeListNew(json);
         }
 
         public async Task<Notice> GetNoticeContentOld(string courseId, string noticeId)
@@ -144,6 +145,13 @@ namespace LearnTHU.Model
             string url = string.Format(@"http://learn.tsinghua.edu.cn/MultiLanguage/public/bbs/note_reply.jsp?bbs_type=课程公告&id={0}&course_id={1}", noticeId, courseId);
             string html = await Request(url);
             return Parse.NoticeOld(html);
+        }
+
+        public async Task<Notice> GetNoticeContentNew(string courseId, string noticeId)
+        {
+            string url = string.Format(@"http://learn.cic.tsinghua.edu.cn/b/myCourse/notice/studDetail/{0}", noticeId);
+            string json = await Request(url);
+            return Parse.NoticeNew(json);
         }
 
         public async Task<List<File>> GetFileListOld(string courseId)

@@ -48,6 +48,7 @@ namespace LearnTHU.View
             if (courseId != VM.CourseId)
             {
                 await VM.ChangeCourse(courseId);
+                detailControl.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -56,9 +57,16 @@ namespace LearnTHU.View
             Null, Notice, File, Work
         }
 
-        private void noticeList_ItemClick(object sender, ItemClickEventArgs e)
+        private async void noticeList_ItemClick(object sender, ItemClickEventArgs e)
         {
-            
+            detailControl.Visibility = Visibility.Visible;
+
+            VM.ChangeNoticeDetail(e.ClickedItem as NoticeVM);
+        }
+
+        private void BackBtn_Click(object sender, RoutedEventArgs e)
+        {
+            detailControl.Visibility = Visibility.Collapsed;
         }
     }
 }

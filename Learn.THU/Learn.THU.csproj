@@ -103,6 +103,7 @@
     <Compile Include="Model\Merge.cs" />
     <Compile Include="Model\MainModel.cs" />
     <Compile Include="Model\Parse.cs" />
+    <Compile Include="Model\SaveLoad.cs" />
     <Compile Include="Model\Web.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModel\CourseViewModel.cs" />

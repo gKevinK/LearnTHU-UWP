@@ -15,5 +15,27 @@ namespace LearnTHU.Model
 
             }
         }
+
+        public static int NoticeList(List<Notice> oldList, List<Notice> newList)
+        {
+            int newNum = 0;
+            foreach (Notice newNotice in newList)
+            {
+                Notice oldNotice = oldList.Find(on => on.Id == newNotice.Id);
+                if (oldNotice == null || newNotice.IsRead == false)
+                {
+                    newNum += 1; break;
+                }
+                if (newNotice.IsRead == true)
+                {
+                    newNotice.Content = oldNotice.Content;
+                }
+                newNotice.IsRead = oldNotice.IsRead && newNotice.IsRead;
+            }
+            oldList.Clear();
+            foreach (Notice newNotice in newList)
+                oldList.Add(newNotice);
+            return newNum;
+        }
     }
 }

@@ -129,28 +129,53 @@ namespace LearnTHU.Model
 
         public async Task<List<Notice>> GetNoticeList(string courseId)
         {
-            //if (CourseList == null)
-            //{
-            //    CourseList = await web.GetCourseListOld();
-            //}
+            Course course = CourseList.Find(c => c.Id == courseId);
+            if (course == null || course.NoticeList == null)
+            {
+                throw new Exception("No record of this course.");
+            }
+            return course.NoticeList;
+        }
+
+        public async Task<RefreshResult> RefNoticeList(string courseId, bool forceRefresh = false)
+        {
             Course course = CourseList.Find(c => c.Id == courseId);
             if (course == null)
             {
                 throw new Exception("No record of this course.");
             }
-            List<Notice> list = course.NoticeList;
-            if (list == null || course.NeedRefresh || DateTime.Now - course.RefreshTime > new TimeSpan(2, 0, 0))
+            if (course.NeedRefresh || DateTime.Now - course.RefreshTime > new TimeSpan(2, 0, 0) || forceRefresh)
             {
-                course.NoticeList = await web.GetNoticeListOld(course.Id);
-                // TODO Merge
-                list = course.NoticeList;
+                List<Notice> list = course.IsNewWebLearning ?
+                   await web.GetNoticeListNew(course.Id) : await web.GetNoticeListOld(course.Id);
+                Merge.NoticeList(course.NoticeList, list);
+                return RefreshResult.Success;
             }
-            return list;
+            else
+                return RefreshResult.No;
         }
 
-        public async Task<RefreshResult> GetNotice(string courseId, string noticeId)
+        public async Task<Notice> GetNotice(string courseId, string noticeId)
         {
-            // TODO
+            Course course = CourseList.Find(c => c.Id == courseId);
+            if (course == null)
+            {
+                throw new Exception("No record of this course.");
+            }
+            Notice notice = course.NoticeList.Find(n => n.Id == noticeId);
+            if (notice == null)
+            {
+                throw new Exception("No record of this notice.");
+            }
+            return notice;
+        }
+
+        public async Task<RefreshResult> RefNotice(string courseId, string noticeId)
+        {
+            Notice newNotice = courseId.Length < 10 ?
+                await web.GetNoticeContentOld(courseId, noticeId) : await web.GetNoticeContentNew(courseId, noticeId);
+            Notice oldNotice = await GetNotice(courseId, noticeId);
+            oldNotice.Content = newNotice.Content;
             return RefreshResult.Success;
         }
 
@@ -168,7 +193,7 @@ namespace LearnTHU.Model
 
         public enum RefreshResult
         {
-            Success, Failed, Error
+            Success, No, Failed, Error
         }
     }
 }

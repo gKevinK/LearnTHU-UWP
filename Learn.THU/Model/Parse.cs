@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Windows.Data.Json;
 
 namespace LearnTHU.Model
 {
@@ -27,12 +28,12 @@ namespace LearnTHU.Model
                 string link = match.Groups[1].Value;
                 if (link.Contains("course_id"))
                 {
-                    course.Id = link.Substring(link.Length - 6);
+                    course.Id = Regex.Replace(link, ".+id=", "");
                     course.IsNewWebLearning = false;
                 }
                 else
                 {
-                    course.Id = link.Substring(link.Length - 22);
+                    course.Id = Regex.Replace(link, ".+coursehome/", "");
                     course.IsNewWebLearning = true;
                 }
                 
@@ -53,10 +54,36 @@ namespace LearnTHU.Model
                 Notice notice = new Notice
                 {
                     Id = match.Groups[1].Value,
-                    Title = Regex.Replace(match.Groups[2].Value, "<[^>]+>", ""),
+                    Title = WebUtility.HtmlDecode(Regex.Replace(match.Groups[2].Value, "<[^>]+>", "")),
                     Publisher = match.Groups[3].Value,
                     Date = DateTime.Parse(match.Groups[4].Value),
                     IsRead = match.Groups[5].Value == @"已读" ? true : false,
+                };
+                noticeList.Add(notice);
+            }
+            return noticeList;
+        }
+
+        public static List<Notice> NoticeListNew(string jsonString)
+        {
+            List<Notice> noticeList = new List<Notice>();
+            JsonObject jsonObject = JsonObject.Parse(jsonString);
+            string message = jsonObject.GetNamedString("message", "");
+            if (message != "success")
+            {
+                throw new Exception();
+            }
+            JsonArray recordList = jsonObject.GetNamedObject("paginationList").GetNamedArray("recordList", new JsonArray());
+            foreach(IJsonValue record in recordList)
+            {
+                JsonObject courseNotice = record.GetObject().GetNamedObject("courseNotice");
+                Notice notice = new Notice()
+                {
+                    Id = courseNotice.GetNamedNumber("id", 0).ToString(),
+                    Title = courseNotice.GetNamedString("title", ""),
+                    Date = DateTime.Parse(courseNotice.GetNamedString("regDate")),
+                    Publisher = courseNotice.GetNamedString("owner", ""),
+                    IsRead = record.GetObject().GetNamedString("status").Contains("1") ? true : false,
                 };
                 noticeList.Add(notice);
             }
@@ -71,6 +98,19 @@ namespace LearnTHU.Model
             // text = Regex.Replace(text, "<[^>]+>", "");
             // text = WebUtility.HtmlDecode(text);
             notice.Content = text;
+            return notice;
+        }
+
+        public static Notice NoticeNew(string json)
+        {
+            Notice notice = new Notice();
+            JsonObject jsonObject = JsonObject.Parse(json);
+            string message = jsonObject.GetNamedString("message", "");
+            if (message != "success")
+            {
+                throw new Exception();
+            }
+            notice.Content = jsonObject.GetNamedObject("dataSingle").GetNamedString("detail");
             return notice;
         }
 
