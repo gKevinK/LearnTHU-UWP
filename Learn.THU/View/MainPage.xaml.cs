@@ -26,15 +26,19 @@ namespace LearnTHU.View
     {
         MainViewModel VM { get; set; } = new MainViewModel();
 
+        public MainPage Current = null;
+
         public MainPage()
         {
             this.InitializeComponent();
 
             this.Loaded += SetCourseList;
+            Current = this;
         }
 
         private async void SetCourseList(object sender, RoutedEventArgs e)
         {
+            await VM.Model.Load();
             await VM.GetCourseList();
         }
 
@@ -44,10 +48,10 @@ namespace LearnTHU.View
             NavListView.Visibility = splitView.IsPaneOpen ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        private async void NavListView_ItemClick(object sender, ItemClickEventArgs e)
+        private void NavListView_ItemClick(object sender, ItemClickEventArgs e)
         {
             CourseVM item = e.ClickedItem as CourseVM;
-            if (MainFrame.SourcePageType != typeof(CoursePage))
+            if (MainFrame.SourcePageType != typeof(CoursePage) || CoursePage.Current == null)
             {
                 MainFrame.Navigate(typeof(CoursePage), item.Id);
             }
@@ -60,6 +64,12 @@ namespace LearnTHU.View
         private void SettingBtn_Click(object sender, RoutedEventArgs e)
         {
             MainFrame.Navigate(typeof(Setting));
+        }
+
+        public async void NotifyUser(string message)
+        {
+            // TODO
+            await new Windows.UI.Popups.MessageDialog(message).ShowAsync();
         }
     }
 

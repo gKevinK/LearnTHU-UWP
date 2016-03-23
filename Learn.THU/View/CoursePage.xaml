@@ -23,44 +23,14 @@
             </Grid>
         </DataTemplate>
 
-        <DataTemplate x:Key="DetailContentTemplate" x:DataType="vm:NoticeVM">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                    <RowDefinition></RowDefinition>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="48"></ColumnDefinition>
-                    <ColumnDefinition Width="*"></ColumnDefinition>
-                    <ColumnDefinition Width="*"></ColumnDefinition>
-                    <ColumnDefinition Width="48"></ColumnDefinition>
-                </Grid.ColumnDefinitions>
-                <Button x:Name="BackBtn" Click="BackBtn_Click" Background="Transparent" Width="48" Height="48">
-                        <SymbolIcon Symbol="Forward"></SymbolIcon>
-                </Button>
-                <TextBlock Grid.Column="1" Grid.ColumnSpan="3" FontSize="18" FontWeight="SemiBold" Padding="16,0"
-                           Text="{x:Bind Title}" VerticalAlignment="Center" TextWrapping="Wrap"/>
-                <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" >
-                    <TextBlock Text="发布者：" VerticalAlignment="Center" Padding="12,0,0,0" ></TextBlock>
-                    <TextBlock VerticalAlignment="Center"
-                               Text="{x:Bind Publisher}"></TextBlock>
-                </StackPanel>
-                <StackPanel Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Orientation="Horizontal">
-                    <TextBlock Text="发布日期：" Grid.Column="2" VerticalAlignment="Center" Padding="12,0,0,0"></TextBlock>
-                    <TextBlock VerticalAlignment="Center"
-                               Text="{x:Bind Date}"></TextBlock>
-                </StackPanel>
-                <RichTextBlock Grid.Row="3" Grid.ColumnSpan="4"></RichTextBlock>
-            </Grid>
-        </DataTemplate>
-        
+
+
         <!--<Style x:Key="NoticeItemStyle" TargetType="ListViewItem">
             <Setter Property="HorizontalAlignment" Value="Stretch" />
             <Setter Property="Padding" Value="0" />
         </Style>-->
     </Page.Resources>
-    
+
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="48"></RowDefinition>
@@ -68,7 +38,7 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"></ColumnDefinition>
-            <ColumnDefinition Width="320"></ColumnDefinition>
+            <ColumnDefinition x:Name="detailColumn" Width="*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
         <TextBlock x:Name="TitleName" Text="{x:Bind VM.CourseName, Mode=OneWay}"
@@ -82,7 +52,7 @@
                           ItemClick="noticeList_ItemClick">
                     <ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem">
-                            <Setter Property="BorderThickness" Value="0,1,0,0" />
+                            <Setter Property="BorderThickness" Value="0,0,0,1" />
                             <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseLowBrush}" />
                             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                         </Style>
@@ -91,24 +61,52 @@
             </PivotItem>
             <PivotItem x:Name="filePivotItem" Header="文件">
                 <ListView x:Name="fileList">
-                    
+
                 </ListView>
             </PivotItem>
             <PivotItem Header="作业">
-                
+
             </PivotItem>
         </Pivot>
 
-        <ContentPresenter x:Name="detailControl" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch"
-                          BorderThickness="1,0,0,0" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                          ContentTemplate="{StaticResource DetailContentTemplate}"
-                          Content="{x:Bind VM.NoticeDetail, Mode=OneWay}" VerticalAlignment="Stretch">
+        <ContentPresenter x:Name="detailControl" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                          BorderThickness="1,0,0,0" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="48"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="48"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Button Click="BackBtn_Click" Background="Transparent" Width="48" Height="48">
+                    <SymbolIcon Symbol="Forward"></SymbolIcon>
+                </Button>
+                <TextBlock Grid.Column="1" Grid.ColumnSpan="3" FontSize="18" FontWeight="SemiBold" Padding="16,0"
+                        Text="{x:Bind VM.NoticeDetail.Title, Mode=OneWay}" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" Padding="12,12,0,12" >
+                    <TextBlock Text="发布者：" FontSize="12" VerticalAlignment="Center"></TextBlock>
+                    <TextBlock VerticalAlignment="Center" FontSize="12"
+                            Text="{x:Bind VM.NoticeDetail.Publisher, Mode=OneWay}"></TextBlock>
+                </StackPanel>
+                <StackPanel Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Orientation="Horizontal">
+                    <TextBlock Text="发布日期：" FontSize="12" Grid.Column="2" VerticalAlignment="Center" Padding="12,0,0,0"></TextBlock>
+                    <TextBlock VerticalAlignment="Center" FontSize="12"
+                            Text="{x:Bind VM.NoticeDetail.Date, Mode=OneWay}"></TextBlock>
+                </StackPanel>
+                <WebView x:Name="detailContentWebView" Grid.Row="3" Grid.ColumnSpan="4" Margin="12" ></WebView>
+            </Grid>
             <ContentPresenter.ContentTransitions>
                 <TransitionCollection>
-                    <EntranceThemeTransition FromHorizontalOffset="20"></EntranceThemeTransition>
+                    <EntranceThemeTransition FromVerticalOffset="8"></EntranceThemeTransition>
                 </TransitionCollection>
             </ContentPresenter.ContentTransitions>
         </ContentPresenter>
+        <Button x:Name="button" Content="Button" HorizontalAlignment="Left" Margin="10,11,0,0" VerticalAlignment="Top" Grid.Column="1" Click="button_Click"/>
         <!--<ContentControl x:Name="detailControl"></ContentControl>-->
     </Grid>
 </Page>

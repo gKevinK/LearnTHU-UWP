@@ -14,6 +14,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using LearnTHU.Model;
 
 namespace LearnTHU
 {
@@ -33,6 +34,13 @@ namespace LearnTHU
                 Microsoft.ApplicationInsights.WindowsCollectors.Session);
             this.InitializeComponent();
             this.Suspending += OnSuspending;
+            this.UnhandledException += OnUnhandledException;
+        }
+
+        private async void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            e.Handled = true;
+            await new Windows.UI.Popups.MessageDialog(e.Message, @"程序遇到了问题…").ShowAsync();
         }
 
         /// <summary>
@@ -107,11 +115,16 @@ namespace LearnTHU
         /// </summary>
         /// <param name="sender">挂起的请求的源。</param>
         /// <param name="e">有关挂起请求的详细信息。</param>
-        private void OnSuspending(object sender, SuspendingEventArgs e)
+        private async void OnSuspending(object sender, SuspendingEventArgs e)
         {
             var deferral = e.SuspendingOperation.GetDeferral();
             //TODO: 保存应用程序状态并停止任何后台活动
+            if (MainModel.Current != null)
+            {
+                await MainModel.Current.Save();
+            }
             deferral.Complete();
         }
+
     }
 }

@@ -68,7 +68,7 @@ namespace LearnTHU.Model
             string coursesHtml = await Request(@"http://learn.tsinghua.edu.cn/MultiLanguage/lesson/student/MyCourse.jsp?language=cn");
             Regex regex = new Regex(@"<iframe src=(.+) height");
             string url = regex.Match(coursesHtml).Groups[1].Value;
-            Request(url);
+            await Request(url);
         }
 
         /// <summary>
@@ -159,6 +159,13 @@ namespace LearnTHU.Model
             string url = string.Format(@"http://learn.tsinghua.edu.cn/MultiLanguage/lesson/student/download.jsp?course_id={0}", courseId);
             string html = await Request(url);
             return Parse.FileListOld(html);
+        }
+
+        public async Task<List<File>> GetFileListNew(string courseId)
+        {
+            string url = string.Format(@"http://learn.cic.tsinghua.edu.cn/b/myCourse/tree/getCoursewareTreeData/{0}/0", courseId);
+            string json = await Request(url);
+            return Parse.FileListNew(json);
         }
 
         public async Task<List<Work>> GetWorkListOld(string courseId)

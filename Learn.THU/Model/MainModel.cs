@@ -40,6 +40,16 @@ namespace LearnTHU.Model
             Current = this;
         }
 
+        public async Task Save()
+        {
+            await SaveLoad.SaveData(CourseList);
+        }
+
+        public async Task Load()
+        {
+            await SaveLoad.LoadData(CourseList);
+        }
+
         public async Task<RefreshResult> RefreshAllData()
         {
             // TODO
@@ -74,43 +84,43 @@ namespace LearnTHU.Model
             }
         }
 
-        public async Task<bool> Serialize()
-        {
-            try
-            {
-                StorageFolder folder = ApplicationData.Current.LocalFolder;
-                System.Runtime.Serialization.Json.DataContractJsonSerializer JsonSerializer = new System.Runtime.Serialization.Json.DataContractJsonSerializer(CourseList.GetType());
-                StorageFile file = await folder.CreateFileAsync(@"CourseData.json", CreationCollisionOption.ReplaceExisting);
-                Stream stream = await file.OpenStreamForWriteAsync();
-                JsonSerializer.WriteObject(stream, CourseList);
-                stream.Flush();
-                stream.Dispose();
-            }
-            catch
-            {
-                return false;
-            }
-            return true;
-        }
+        //public async Task<bool> Serialize()
+        //{
+        //    try
+        //    {
+        //        StorageFolder folder = ApplicationData.Current.LocalFolder;
+        //        System.Runtime.Serialization.Json.DataContractJsonSerializer JsonSerializer = new System.Runtime.Serialization.Json.DataContractJsonSerializer(CourseList.GetType());
+        //        StorageFile file = await folder.CreateFileAsync(@"CourseData.json", CreationCollisionOption.ReplaceExisting);
+        //        Stream stream = await file.OpenStreamForWriteAsync();
+        //        JsonSerializer.WriteObject(stream, CourseList);
+        //        stream.Flush();
+        //        stream.Dispose();
+        //    }
+        //    catch
+        //    {
+        //        return false;
+        //    }
+        //    return true;
+        //}
 
-        public async Task<bool> Unserialize()
-        {
-            try
-            {
-                StorageFolder folder = ApplicationData.Current.LocalFolder;
-                System.Runtime.Serialization.Json.DataContractJsonSerializer JsonSerializer = new System.Runtime.Serialization.Json.DataContractJsonSerializer(CourseList.GetType());
-                StorageFile file = await folder.GetFileAsync(@"CourseData.json");
-                Stream stream = await file.OpenStreamForReadAsync();
-                CourseList = (List<Course>)JsonSerializer.ReadObject(stream);
-                stream.Flush();
-                stream.Dispose();
-            }
-            catch
-            {
-                return false;
-            }
-            return true;
-        }
+        //public async Task<bool> Unserialize()
+        //{
+        //    try
+        //    {
+        //        StorageFolder folder = ApplicationData.Current.LocalFolder;
+        //        System.Runtime.Serialization.Json.DataContractJsonSerializer JsonSerializer = new System.Runtime.Serialization.Json.DataContractJsonSerializer(CourseList.GetType());
+        //        StorageFile file = await folder.GetFileAsync(@"CourseData.json");
+        //        Stream stream = await file.OpenStreamForReadAsync();
+        //        CourseList = (List<Course>)JsonSerializer.ReadObject(stream);
+        //        stream.Flush();
+        //        stream.Dispose();
+        //    }
+        //    catch
+        //    {
+        //        return false;
+        //    }
+        //    return true;
+        //}
 
         public async Task<List<Course>> GetCourseList()
         {
@@ -127,7 +137,7 @@ namespace LearnTHU.Model
             return CourseList;
         }
 
-        public async Task<List<Notice>> GetNoticeList(string courseId)
+        public List<Notice> GetNoticeList(string courseId)
         {
             Course course = CourseList.Find(c => c.Id == courseId);
             if (course == null || course.NoticeList == null)
@@ -144,11 +154,12 @@ namespace LearnTHU.Model
             {
                 throw new Exception("No record of this course.");
             }
-            if (course.NeedRefresh || DateTime.Now - course.RefreshTime > new TimeSpan(2, 0, 0) || forceRefresh)
+            if (course.NeedRefresh || DateTime.Now - course.RefreshNoticeTime > new TimeSpan(2, 0, 0) || forceRefresh)
             {
                 List<Notice> list = course.IsNewWebLearning ?
                    await web.GetNoticeListNew(course.Id) : await web.GetNoticeListOld(course.Id);
                 Merge.NoticeList(course.NoticeList, list);
+                // await Save();
                 return RefreshResult.Success;
             }
             else
@@ -177,6 +188,35 @@ namespace LearnTHU.Model
             Notice oldNotice = await GetNotice(courseId, noticeId);
             oldNotice.Content = newNotice.Content;
             return RefreshResult.Success;
+        }
+
+        public List<File> GetFileList(string courseId)
+        {
+            Course course = CourseList.Find(c => c.Id == courseId);
+            if (course == null || course.FileList == null)
+            {
+                throw new Exception("No record of this course.");
+            }
+            return course.FileList;
+        }
+
+        public async Task<RefreshResult> RefFileList(string courseId, bool forceRefresh = false)
+        {
+            Course course = CourseList.Find(c => c.Id == courseId);
+            if (course == null)
+            {
+                throw new Exception("No record of this course.");
+            }
+            if (course.NeedRefresh || DateTime.Now - course.RefreshNoticeTime > new TimeSpan(2, 0, 0) || forceRefresh)
+            {
+                List<File> list = course.IsNewWebLearning ?
+                   await web.GetFileListNew(course.Id) : await web.GetFileListOld(course.Id);
+                //Merge.FileList(course.NoticeList, list);
+                course.FileList = list;
+                return RefreshResult.Success;
+            }
+            else
+                return RefreshResult.No;
         }
 
         public async Task<RefreshResult> GetFile(string courseId, string url)

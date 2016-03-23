@@ -11,32 +11,68 @@
 
     <Page.Resources>
         <DataTemplate x:Key="NavMenuItemTemplate" x:DataType="vm:CourseVM">
-            <Grid Height="40" Width="320">
+            <Grid Height="40" Width="280">
+                <!--<VisualStateManager.VisualStateGroups>
+                    <VisualStateGroup x:Name="noticeState">
+                        <VisualState>
+                            <VisualState.StateTriggers>
+                                <StateTrigger IsActive="{x:Bind HaveNewNotice}"></StateTrigger>
+                            </VisualState.StateTriggers>
+                            <VisualState.Setters>
+                                <Setter Target="noticeBack.Visibility" Value="Visible" />
+                                <Setter Target="noticeText.Foreground" Value="Black" />
+                            </VisualState.Setters>
+                        </VisualState>
+                    </VisualStateGroup>
+                    <VisualStateGroup x:Name="fileState">
+                        <VisualState>
+                            <VisualState.StateTriggers>
+                                <StateTrigger IsActive="{x:Bind HaveNewFile}"></StateTrigger>
+                            </VisualState.StateTriggers>
+                            <VisualState.Setters>
+                                <Setter Target="fileBack.Visibility" Value="Visible" />
+                                <Setter Target="fileText.Foreground" Value="Black" />
+                            </VisualState.Setters>
+                        </VisualState>
+                    </VisualStateGroup>
+                    <VisualStateGroup x:Name="workState">
+                        <VisualState>
+                            <VisualState.StateTriggers>
+                                <StateTrigger IsActive="{x:Bind HaveNewWork}"></StateTrigger>
+                            </VisualState.StateTriggers>
+                            <VisualState.Setters>
+                                <Setter Target="workBack.Visibility" Value="Visible" />
+                                <Setter Target="workText.Foreground" Value="Black" />
+                            </VisualState.Setters>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateManager.VisualStateGroups>-->
+                
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="48"/>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="36"/>
-                    <ColumnDefinition Width="36"/>
-                    <ColumnDefinition Width="36"/>
+                    <ColumnDefinition Width="32"/>
+                    <ColumnDefinition Width="32"/>
+                    <ColumnDefinition Width="32"/>
                 </Grid.ColumnDefinitions>
                 <Ellipse Fill="{ThemeResource SystemControlForegroundBaseHighBrush}" Width="8" Height="8"/>
                 <TextBlock x:Name="Text" Grid.Column="1" Text="{x:Bind Label}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
                 <Button x:Name="NewNotice" Grid.Column="2" Style="{ThemeResource courseNumberStyle}" Padding="0">
                     <Grid>
-                        <Ellipse Width="28" Height="28" Fill="#FFFF7F7F"/>
-                        <TextBlock Text="{x:Bind NewNotice}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <Ellipse x:Name="noticeBack" Width="28" Height="28" Fill="#7FFF7F7F" Visibility="Collapsed"/>
+                        <TextBlock x:Name="noticeText" Text="{x:Bind NewNotice}" Foreground="DarkGray" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     </Grid>
                 </Button>
                 <Button x:Name="NewFile" Grid.Column="3" Style="{ThemeResource courseNumberStyle}" Padding="0">
                     <Grid>
-                        <Ellipse Width="28" Height="28" Fill="#FFFF7F7F"/>
-                        <TextBlock Text="{x:Bind NewFile}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <Ellipse x:Name="fileBack" Width="28" Height="28" Fill="#7FFF7F7F" Visibility="Collapsed"/>
+                        <TextBlock x:Name="fileText" Text="{x:Bind NewFile}" Foreground="DarkGray" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     </Grid>
                 </Button>
                 <Button x:Name="NewWork" Grid.Column="4" Style="{ThemeResource courseNumberStyle}" Padding="0">
                     <Grid>
-                        <Ellipse Width="28" Height="28" Fill="#FFFF7F7F"/>
-                        <TextBlock Text="{x:Bind NewWork}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <Ellipse x:Name="workBack" Width="28" Height="28" Fill="#7FFF7F7F" Visibility="Collapsed"/>
+                        <TextBlock x:Name="workText" Text="{x:Bind NewWork}" Foreground="DarkGray" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     </Grid>
                 </Button>
             </Grid>
@@ -73,7 +109,7 @@
         </Grid.ColumnDefinitions>-->
 
         <!--<Button x:Name="splitViewToggle" Style="{ThemeResource splitViewToggleButtonStyle}" Click="splitViewToggle_Click"/>-->
-        <SplitView x:Name="splitView" DisplayMode="CompactInline" IsPaneOpen="True">
+        <SplitView x:Name="splitView" DisplayMode="CompactInline" IsPaneOpen="True" OpenPaneLength="280">
             <SplitView.Pane>
                 <Grid>
                     <Grid.RowDefinitions>
@@ -85,19 +121,19 @@
                     <Button x:Name="splitViewToggle2" Style="{ThemeResource splitViewToggleButtonStyle}" Click="splitViewToggle_Click"/>
                     <TextBlock Text="Learn@THU" VerticalAlignment="Center" HorizontalAlignment="Center"
                                FontSize="20" FontStyle="Italic" FontWeight="SemiBold"></TextBlock>
-                    <ListView x:Name="NavListView" Grid.Row="1" SelectionMode="None" IsItemClickEnabled="True"
+                    <ListView x:Name="NavListView" Grid.Row="1" SelectionMode="None" IsItemClickEnabled="True" Width="280"
                               ItemsSource="{x:Bind VM.Courses, Mode=OneWay}"
                               ItemTemplate="{StaticResource NavMenuItemTemplate}"
                               ItemContainerStyle="{StaticResource NavMenuItemContainerStyle}"
                               ItemClick="NavListView_ItemClick">
                         <ListView.Header>
-                            <Grid Width="320" Height="40">
+                            <Grid Width="280" Height="40">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="48"/>
                                     <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="36"/>
-                                    <ColumnDefinition Width="36"/>
-                                    <ColumnDefinition Width="36"/>
+                                    <ColumnDefinition Width="32"/>
+                                    <ColumnDefinition Width="32"/>
+                                    <ColumnDefinition Width="32"/>
                                 </Grid.ColumnDefinitions>
                                 <SymbolIcon Symbol="List" />
                                 <TextBlock Grid.Column="1" Text="课程名称" VerticalAlignment="Center" />
@@ -111,10 +147,10 @@
                               ItemContainerStyle="{StaticResource NavMenuItemContainerStyle}">
                         <ListView.Items>
                             <ListViewItem>
-                                <Grid Height="48" Width="320">
+                                <Grid Height="48" Width="280">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="48"></ColumnDefinition>
-                                        <ColumnDefinition></ColumnDefinition>
+                                        <ColumnDefinition Width="*"></ColumnDefinition>
                                     </Grid.ColumnDefinitions>
                                     <SymbolIcon Symbol="Setting"></SymbolIcon>
                                     <TextBlock Text="设置" Grid.Column="1" VerticalAlignment="Center"></TextBlock>

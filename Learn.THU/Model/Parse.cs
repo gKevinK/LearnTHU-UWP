@@ -71,7 +71,7 @@ namespace LearnTHU.Model
             string message = jsonObject.GetNamedString("message", "");
             if (message != "success")
             {
-                throw new Exception();
+                throw new Exception("公告列表获取失败");
             }
             JsonArray recordList = jsonObject.GetNamedObject("paginationList").GetNamedArray("recordList", new JsonArray());
             foreach(IJsonValue record in recordList)
@@ -135,7 +135,7 @@ namespace LearnTHU.Model
                 {
                     fileList.Add(new File()
                     {
-                        Url = @"http://learn.tsinghua.edu.cn" + m.Groups[1].Value,
+                        Id = m.Groups[1].Value,
                         Name = m.Groups[2].Value.Trim(),
                         Note = m.Groups[3].Value,
                         GroupName = groupName,
@@ -146,6 +146,51 @@ namespace LearnTHU.Model
                 }
             }
             return fileList;
+        }
+
+        public static List<File> FileListNew(string json)
+        {
+            List<File> files = new List<File>();
+            JsonObject jsonObj = JsonObject.Parse(json);
+            if (jsonObj.GetNamedString("message", "") != "success")
+            {
+                throw new Exception("文件列表获取失败");
+            }
+            if (jsonObj.GetNamedObject("resultList").Values.Count == 0)
+            {
+                return files;
+            }
+            JsonObject node = jsonObj.GetNamedObject("resultList").Values.First().GetObject().GetNamedObject("childMapData");
+            foreach (IJsonValue group in node.Values)
+            {
+                if (group.ValueType == JsonValueType.Object)
+                {
+                    JsonObject groupObj = group.GetObject();
+                    string groupName = groupObj.GetNamedObject("courseOutlines").GetNamedString("title");
+                    JsonArray fileArr = groupObj.GetNamedArray("courseCoursewareList");
+                    foreach (IJsonValue fileJson in fileArr)
+                    {
+                        if (fileJson.ValueType == JsonValueType.Object)
+                        {
+                            JsonObject fileObj = fileJson.GetObject();
+                            files.Add(new File() {
+                                Id = fileObj.GetNamedObject("resourcesMappingByFileId").GetNamedString("fileId"),
+                                Name = fileObj.GetNamedString("title"),
+                                Note = fileObj.GetNamedValue("detail").ValueType == JsonValueType.Null ?
+                                    "" : fileObj.GetNamedString("detail"),
+                                Status = fileObj.GetNamedObject("resourcesMappingByFileId").GetNamedNumber("resourcesStatus") == 1 ?
+                                    File.FileStatus.Undownload : File.FileStatus.Downloaded,
+                                GroupName = groupName,
+                                FileName = fileObj.GetNamedObject("resourcesMappingByFileId").GetNamedString("fileName"),
+                                FileSize = Double.Parse(fileObj.GetNamedObject("resourcesMappingByFileId").GetNamedString("fileSize")),
+                                UploadDate = new DateTime(1970, 1, 1).AddMilliseconds(
+                                    fileObj.GetNamedObject("resourcesMappingByFileId").GetNamedNumber("regDate")),
+                            });
+                        }
+                    }
+                }
+            }
+            return files;
         }
 
         public static List<Work> WorkListOld(string html)

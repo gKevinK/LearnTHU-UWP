@@ -14,35 +14,41 @@ namespace LearnTHU.ViewModel
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        MainModel model = null;
+        public MainModel Model = null;
+
+        public MainViewModel Current = null;
 
         public ObservableCollection<CourseVM> Courses { get; set; }
-
-        public ObservableCollection<Notice> Notices { get; set; }
 
         public MainViewModel()
         {
             if (MainModel.Current != null)
             {
-                model = MainModel.Current;
+                Model = MainModel.Current;
             }
             else
             {
-                model = new MainModel();
+                Model = new MainModel();
             }
+            Current = this;
         }
 
         public async Task GetCourseList()
         {
-            var courses = await model.GetCourseList();
+            var courses = await Model.GetCourseList();
             Courses = new ObservableCollection<CourseVM>();
             foreach (var course in courses)
             {
                 Courses.Add(new CourseVM(course));
             }
+            RaisePropertyChanged("Courses");
+        }
+
+        public void RaisePropertyChanged(string propertyName)
+        {
             if (PropertyChanged != null)
             {
-                PropertyChanged(this, new PropertyChangedEventArgs("Courses"));
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
     }
@@ -55,6 +61,9 @@ namespace LearnTHU.ViewModel
         public int NewNotice { get { return _course.NewNoticeCount; } }
         public int NewFile { get { return _course.NewFileCount; } }
         public int NewWork { get { return _course.UnhandWorkCount; } }
+        public bool HaveNewNotice { get { return _course.NewNoticeCount > 0; } }
+        public bool HaveNewFile { get { return _course.NewFileCount > 0; } }
+        public bool HaveNewWork { get { return _course.UnhandWorkCount > 0; } }
 
         public CourseVM(Course course)
         {

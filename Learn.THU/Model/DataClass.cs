@@ -13,38 +13,40 @@ namespace LearnTHU.Model
         public bool IsNewWebLearning { get; set; }
         public bool IsActive { get; set; }
         public bool NeedRefresh { get; set; }
-        public DateTime RefreshTime { get; set; }
+        public DateTime RefreshNoticeTime;
+        public DateTime RefreshFileTime;
+        public DateTime RefreshWorkTime;
 
         public List<Notice> NoticeList { get; set; } = new List<Notice>();
         public List<File> FileList { get; set; } = new List<File>();
         public List<Work> WorkList { get; set; } = new List<Work>();
 
-        private int nwc;
+        public int NewNoticeCountOriginal;
         public int NewNoticeCount
         {
-            get { return (NeedRefresh) ? nwc : NoticeList.Count(notice => notice.IsRead == false); }
+            get { return (NeedRefresh) ? NewNoticeCountOriginal : NoticeList.Count(notice => notice.IsRead == false); }
         }
 
-        private int nfc;
+        public int NewFileCountOriginal;
         public int NewFileCount
         {
             get { return (NeedRefresh) ?
-                    nfc : FileList.Count(file => file.Status == File.FileStatus.Undownload); }
+                    NewFileCountOriginal : FileList.Count(file => file.Status == File.FileStatus.Undownload); }
         }
 
-        private int uwc;
+        public int UnhandWorkCountOriginal;
         public int UnhandWorkCount
         {
             get { return (NeedRefresh) ?
-                    uwc - WorkList.Count(work => work.Status == Work.WorkStatus.Ignored) :
+                    UnhandWorkCountOriginal - WorkList.Count(work => work.Status == Work.WorkStatus.Ignored) :
                     WorkList.Count(work => work.Status == Work.WorkStatus.Unhand); }
         }
 
         public void InitNewCount(int newNotice, int newFile, int unhandWork)
         {
-            nwc = newNotice;
-            nfc = newFile;
-            uwc = unhandWork;
+            NewNoticeCountOriginal = newNotice;
+            NewFileCountOriginal = newFile;
+            UnhandWorkCountOriginal = unhandWork;
         }
     }
 
@@ -66,7 +68,7 @@ namespace LearnTHU.Model
         public string GroupName { get; set; }
         public double FileSize { get; set; }
         public string FileName { get; set; }
-        public string Url { get; set; }
+        public string Id { get; set; }
 
         public enum FileStatus
         {

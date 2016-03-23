@@ -60,13 +60,21 @@ namespace LearnTHU.View
         private async void noticeList_ItemClick(object sender, ItemClickEventArgs e)
         {
             detailControl.Visibility = Visibility.Visible;
+            detailColumn.Width = new GridLength(1, GridUnitType.Star);
 
-            VM.ChangeNoticeDetail(e.ClickedItem as NoticeVM);
+            await VM.ChangeNoticeDetail(e.ClickedItem as NoticeVM);
+            detailContentWebView.NavigateToString(VM.NoticeDetail.Content);
         }
 
         private void BackBtn_Click(object sender, RoutedEventArgs e)
         {
             detailControl.Visibility = Visibility.Collapsed;
+            detailColumn.Width = new GridLength(0);
+        }
+
+        private async void button_Click(object sender, RoutedEventArgs e)
+        {
+            await VM.AAA();
         }
     }
 }

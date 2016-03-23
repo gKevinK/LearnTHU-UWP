@@ -10,22 +10,34 @@ namespace LearnTHU.Model
 {
     public class SaveLoad
     {
-        static async void SaveData(List<Course> courses)
+        public static async Task SaveData(List<Course> courses)
         {
             MainModel model = MainModel.Current;
             if (model == null) return;
             var vault = new Windows.Security.Credentials.PasswordVault();
-            if (vault.RetrieveAll().Count == 0 || vault.FindAllByResource("LearnTHU")[0].Password == "") return;
+            //if (vault.RetrieveAll().Count == 0 || vault.FindAllByResource("LearnTHU")[0].Password == "") return;
             string userId = vault.FindAllByResource("LearnTHU")[0].UserName;
             StorageFolder storageFolder = ApplicationData.Current.LocalFolder;
-            StorageFile file = await storageFolder.CreateFileAsync(userId, CreationCollisionOption.ReplaceExisting);
+
             JsonArray jsonArr = new JsonArray();
             foreach (Course c in courses)
             {
                 jsonArr.Add(courseToJson(c));
             }
             string json = jsonArr.Stringify();
-            await FileIO.WriteTextAsync(file, json);
+
+            try
+            {
+                StorageFile file = await storageFolder.CreateFileAsync(userId + ".json", CreationCollisionOption.ReplaceExisting);
+                //StorageFile file = await storageFolder.GetFileAsync(userId + ".json");
+                await FileIO.WriteTextAsync(file, json);
+            }
+            catch (Exception e)
+            {
+                await new Windows.UI.Popups.MessageDialog(e.Message).ShowAsync();
+                return;
+            }
+            
         }
 
         private static IJsonValue courseToJson(Course c)
@@ -44,9 +56,16 @@ namespace LearnTHU.Model
             JsonArray files = new JsonArray();
             foreach (File f in c.FileList)
             {
-
+                files.Add(fileToJson(f));
             }
             jsonObj["Files"] = files;
+
+            JsonArray works = new JsonArray();
+            foreach (Work w in c.WorkList)
+            {
+                works.Add(workToJson(w));
+            }
+            jsonObj["Works"] = works;
             return jsonObj;
         }
 
@@ -65,20 +84,118 @@ namespace LearnTHU.Model
         private static IJsonValue fileToJson(File f)
         {
             JsonObject jsonObj = new JsonObject();
-            jsonObj["Url"] = JsonValue.CreateStringValue(f.Url);
+            jsonObj["Id"] = JsonValue.CreateStringValue(f.Id);
             jsonObj["Name"] = JsonValue.CreateStringValue(f.Name);
             jsonObj["Note"] = JsonValue.CreateStringValue(f.Note);
             jsonObj["UploadDate"] = JsonValue.CreateStringValue(f.UploadDate.ToString());
-            jsonObj["Status"] = JsonValue.CreateStringValue(f.Status.ToString());
+            jsonObj["Status"] = JsonValue.CreateNumberValue((int)f.Status);
+            jsonObj["GroupName"] = JsonValue.CreateStringValue(f.GroupName);
 
+            jsonObj["FileSize"] = JsonValue.CreateNumberValue(f.FileSize);
+            jsonObj["FileName"] = f.FileName == null ? JsonValue.CreateNullValue() : JsonValue.CreateStringValue(f.FileName);
             return jsonObj;
         }
 
         private static IJsonValue workToJson(Work w)
         {
             JsonObject jsonObj = new JsonObject();
-
+            jsonObj["Id"] = JsonValue.CreateStringValue(w.Id);
+            jsonObj["Title"] = JsonValue.CreateStringValue(w.Title);
+            jsonObj["BeginTime"] = JsonValue.CreateStringValue(w.BeginTime.ToString());
+            jsonObj["EndTime"] = JsonValue.CreateStringValue(w.EndTime.ToString());
+            jsonObj["Content"] = w.Content == null ? JsonValue.CreateNullValue() : JsonValue.CreateStringValue(w.Content);
+            jsonObj["Attachment"] = w.Attachment == null ? JsonValue.CreateNullValue() : workFileToJson(w.Attachment);
+            jsonObj["Status"] = JsonValue.CreateNumberValue((int)w.Status);
             return jsonObj;
+        }
+
+        private static IJsonValue workFileToJson(WorkFile wf)
+        {
+            JsonObject jsonObj = new JsonObject();
+            jsonObj["Name"] = JsonValue.CreateStringValue(wf.Name);
+            jsonObj["Url"] = JsonValue.CreateStringValue(wf.Url);
+            return jsonObj;
+        }
+
+        public static async Task LoadData(List<Course> courses)
+        {
+            courses.Clear();
+            var vault = new Windows.Security.Credentials.PasswordVault();
+            if (vault.RetrieveAll().Count == 0 || vault.FindAllByResource("LearnTHU")[0].Password == "") return;
+            string userId = vault.FindAllByResource("LearnTHU")[0].UserName;
+            StorageFolder storageFolder = ApplicationData.Current.LocalFolder;
+            StorageFile file = await storageFolder.GetFileAsync(userId + ".json");
+            if (file == null) return;
+            string json = await FileIO.ReadTextAsync(file);
+            JsonArray jsonArr = JsonArray.Parse(json);
+            foreach (IJsonValue obj in jsonArr)
+            {
+                if (obj.ValueType == JsonValueType.Object)
+                {
+                    courses.Add(jsonToCourse(obj.GetObject()));
+                }
+            }
+            return;
+        }
+        
+        private static Course jsonToCourse(JsonObject jsonObj)
+        {
+            Course c = new Course();
+
+            c.Id = jsonObj.GetNamedString("Id");
+            c.Name = jsonObj.GetNamedString("Name");
+
+            c.NoticeList = new List<Notice>();
+            JsonArray noticeArr = jsonObj.GetNamedArray("Notices");
+            foreach (IJsonValue n in noticeArr)
+            {
+                if (n.ValueType == JsonValueType.Object)
+                {
+                    c.NoticeList.Add(jsonToNotice(n.GetObject()));
+                }
+            }
+
+            c.FileList = new List<File>();
+            JsonArray fileArr = jsonObj.GetNamedArray("Files");
+            foreach (IJsonValue f in fileArr)
+            {
+                if (f.ValueType == JsonValueType.Object)
+                {
+                    c.FileList.Add(jsonToFile(f.GetObject()));
+                }
+            }
+
+            // TODO
+            return c;
+        }
+
+        private static Notice jsonToNotice(JsonObject jsonObj)
+        {
+            Notice n = new Notice();
+            n.Id = jsonObj.GetNamedString("Id");
+            n.Title = jsonObj.GetNamedString("Title");
+            n.Publisher = jsonObj.GetNamedString("Publisher");
+            n.Date = DateTime.Parse(jsonObj.GetNamedString("Date"));
+            n.IsRead = jsonObj.GetNamedBoolean("IsRead");
+            n.Content = jsonObj.GetNamedString("Content", "");
+            return n;
+        }
+
+        private static File jsonToFile(JsonObject jsonObj)
+        {
+            File f = new File()
+            {
+                Id = jsonObj.GetNamedString("Id"),
+                Name = jsonObj.GetNamedString("Name"),
+                Note = jsonObj.GetNamedString("Note"),
+                UploadDate = DateTime.Parse(jsonObj.GetNamedString("UploadDate")),
+                Status = (File.FileStatus)(int)jsonObj.GetNamedNumber("Status"),
+                GroupName = jsonObj.GetNamedString("GroupName"),
+                FileSize = jsonObj.GetNamedNumber("FileSize"),
+                FileName = jsonObj.GetNamedValue("FileName").ValueType == JsonValueType.Null ?
+                    null : jsonObj.GetNamedString("FileName")
+            };
+            return f;
         }
     }
 }
