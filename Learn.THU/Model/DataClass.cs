@@ -13,9 +13,10 @@ namespace LearnTHU.Model
         public bool IsNewWebLearning { get; set; }
         public bool IsActive { get; set; }
         public bool NeedRefresh { get; set; }
-        public DateTime RefreshNoticeTime;
-        public DateTime RefreshFileTime;
-        public DateTime RefreshWorkTime;
+        public DateTime UpdateTime;
+        public DateTime UpdateNoticeTime;
+        public DateTime UpdateFileTime;
+        public DateTime UpdateWorkTime;
 
         public List<Notice> NoticeList { get; set; } = new List<Notice>();
         public List<File> FileList { get; set; } = new List<File>();
@@ -24,20 +25,20 @@ namespace LearnTHU.Model
         public int NewNoticeCountOriginal;
         public int NewNoticeCount
         {
-            get { return (NeedRefresh) ? NewNoticeCountOriginal : NoticeList.Count(notice => notice.IsRead == false); }
+            get { return (UpdateTime >= UpdateNoticeTime) ? NewNoticeCountOriginal : NoticeList.Count(notice => notice.IsRead == false); }
         }
 
         public int NewFileCountOriginal;
         public int NewFileCount
         {
-            get { return (NeedRefresh) ?
+            get { return (UpdateTime >= UpdateFileTime) ?
                     NewFileCountOriginal : FileList.Count(file => file.Status == File.FileStatus.Undownload); }
         }
 
         public int UnhandWorkCountOriginal;
         public int UnhandWorkCount
         {
-            get { return (NeedRefresh) ?
+            get { return (UpdateTime >= UpdateWorkTime) ?
                     UnhandWorkCountOriginal - WorkList.Count(work => work.Status == Work.WorkStatus.Ignored) :
                     WorkList.Count(work => work.Status == Work.WorkStatus.Unhand); }
         }

@@ -50,77 +50,26 @@ namespace LearnTHU.Model
             await SaveLoad.LoadData(CourseList);
         }
 
-        public async Task<RefreshResult> RefreshAllData()
+        public async Task<UpdateResult> RefreshAllData()
         {
             // TODO
-            return RefreshResult.Success;
+            return UpdateResult.Success;
         }
 
-        public async Task<RefreshResult> RefreshCourseList()
+        public async Task<UpdateResult> RefreshCourseList()
         {
             try
             {
                 var newList = await web.GetCourseListOld();
-                //Merge.CourseList(CourseList, newList);
-                CourseList = newList;
+                Merge.CourseList(CourseList, newList);
                 lastRefreshTime = DateTime.Now;
-                return RefreshResult.Success;
+                return UpdateResult.Success;
             }
             catch
             {
-                return RefreshResult.Error;
+                return UpdateResult.Error;
             }
         }
-
-        public async Task<RefreshResult> RefreshCourse(string courseId)
-        {
-            try
-            {
-                return RefreshResult.Success;
-            }
-            catch
-            {
-                return RefreshResult.Error;
-            }
-        }
-
-        //public async Task<bool> Serialize()
-        //{
-        //    try
-        //    {
-        //        StorageFolder folder = ApplicationData.Current.LocalFolder;
-        //        System.Runtime.Serialization.Json.DataContractJsonSerializer JsonSerializer = new System.Runtime.Serialization.Json.DataContractJsonSerializer(CourseList.GetType());
-        //        StorageFile file = await folder.CreateFileAsync(@"CourseData.json", CreationCollisionOption.ReplaceExisting);
-        //        Stream stream = await file.OpenStreamForWriteAsync();
-        //        JsonSerializer.WriteObject(stream, CourseList);
-        //        stream.Flush();
-        //        stream.Dispose();
-        //    }
-        //    catch
-        //    {
-        //        return false;
-        //    }
-        //    return true;
-        //}
-
-        //public async Task<bool> Unserialize()
-        //{
-        //    try
-        //    {
-        //        StorageFolder folder = ApplicationData.Current.LocalFolder;
-        //        System.Runtime.Serialization.Json.DataContractJsonSerializer JsonSerializer = new System.Runtime.Serialization.Json.DataContractJsonSerializer(CourseList.GetType());
-        //        StorageFile file = await folder.GetFileAsync(@"CourseData.json");
-        //        Stream stream = await file.OpenStreamForReadAsync();
-        //        CourseList = (List<Course>)JsonSerializer.ReadObject(stream);
-        //        stream.Flush();
-        //        stream.Dispose();
-        //    }
-        //    catch
-        //    {
-        //        return false;
-        //    }
-        //    return true;
-        //}
 
         public async Task<List<Course>> GetCourseList()
         {
@@ -147,26 +96,25 @@ namespace LearnTHU.Model
             return course.NoticeList;
         }
 
-        public async Task<RefreshResult> RefNoticeList(string courseId, bool forceRefresh = false)
+        public async Task<UpdateResult> RefNoticeList(string courseId, bool forceRefresh = false)
         {
             Course course = CourseList.Find(c => c.Id == courseId);
             if (course == null)
             {
                 throw new Exception("No record of this course.");
             }
-            if (course.NeedRefresh || DateTime.Now - course.RefreshNoticeTime > new TimeSpan(2, 0, 0) || forceRefresh)
+            if (!(course.NeedRefresh || DateTime.Now - course.UpdateNoticeTime > new TimeSpan(2, 0, 0) || forceRefresh))
             {
-                List<Notice> list = course.IsNewWebLearning ?
-                   await web.GetNoticeListNew(course.Id) : await web.GetNoticeListOld(course.Id);
-                Merge.NoticeList(course.NoticeList, list);
-                // await Save();
-                return RefreshResult.Success;
+                return UpdateResult.No;
             }
-            else
-                return RefreshResult.No;
+            List<Notice> list = course.IsNewWebLearning ?
+                await web.GetNoticeListNew(course.Id) : await web.GetNoticeListOld(course.Id);
+            Merge.NoticeList(course.NoticeList, list);
+            course.UpdateNoticeTime = DateTime.Now;
+            return UpdateResult.Success;
         }
 
-        public async Task<Notice> GetNotice(string courseId, string noticeId)
+        public Notice GetNotice(string courseId, string noticeId)
         {
             Course course = CourseList.Find(c => c.Id == courseId);
             if (course == null)
@@ -181,13 +129,17 @@ namespace LearnTHU.Model
             return notice;
         }
 
-        public async Task<RefreshResult> RefNotice(string courseId, string noticeId)
+        public async Task<UpdateResult> RefNotice(string courseId, string noticeId, bool force = false)
         {
+            Notice oldNotice = GetNotice(courseId, noticeId);
+            if (oldNotice.Content != null && oldNotice.IsRead == true && force == false)
+            {
+                return UpdateResult.No;
+            }
             Notice newNotice = courseId.Length < 10 ?
                 await web.GetNoticeContentOld(courseId, noticeId) : await web.GetNoticeContentNew(courseId, noticeId);
-            Notice oldNotice = await GetNotice(courseId, noticeId);
             oldNotice.Content = newNotice.Content;
-            return RefreshResult.Success;
+            return UpdateResult.Success;
         }
 
         public List<File> GetFileList(string courseId)
@@ -200,38 +152,53 @@ namespace LearnTHU.Model
             return course.FileList;
         }
 
-        public async Task<RefreshResult> RefFileList(string courseId, bool forceRefresh = false)
+        public async Task<UpdateResult> RefFileList(string courseId, bool forceRefresh = false)
         {
             Course course = CourseList.Find(c => c.Id == courseId);
             if (course == null)
             {
                 throw new Exception("No record of this course.");
             }
-            if (course.NeedRefresh || DateTime.Now - course.RefreshNoticeTime > new TimeSpan(2, 0, 0) || forceRefresh)
+            if (!(course.NeedRefresh || DateTime.Now - course.UpdateFileTime > new TimeSpan(2, 0, 0) || forceRefresh))
             {
-                List<File> list = course.IsNewWebLearning ?
-                   await web.GetFileListNew(course.Id) : await web.GetFileListOld(course.Id);
-                //Merge.FileList(course.NoticeList, list);
-                course.FileList = list;
-                return RefreshResult.Success;
+                return UpdateResult.No;
             }
-            else
-                return RefreshResult.No;
+            List<File> list = course.IsNewWebLearning ?
+                await web.GetFileListNew(course.Id) : await web.GetFileListOld(course.Id);
+            Merge.FileList(course.FileList, list);
+            course.UpdateFileTime = DateTime.Now;
+            return UpdateResult.Success;
         }
 
-        public async Task<RefreshResult> GetFile(string courseId, string url)
+        public async Task<UpdateResult> DowloadFile(string courseId, string fileId)
         {
             // TODO
-            return RefreshResult.Success;
+            return UpdateResult.Success;
         }
 
-        public async Task<RefreshResult> GetWork(string courseId, string workId)
+        public List<Work> GetWorkList(string courseId)
+        {
+            Course course = CourseList.Find(c => c.Id == courseId);
+            if (course == null || course.WorkList == null)
+            {
+                throw new Exception("No record of this course.");
+            }
+            return course.WorkList;
+        }
+
+        public async Task<UpdateResult> RefWorkList(string courseId)
         {
             // TODO
-            return RefreshResult.Success;
+            return UpdateResult.Success;
         }
 
-        public enum RefreshResult
+        //public async Task<UpdateResult> GetWork(string courseId, string workId)
+        //{
+        //    // TODO
+        //    return UpdateResult.Success;
+        //}
+
+        public enum UpdateResult
         {
             Success, No, Failed, Error
         }

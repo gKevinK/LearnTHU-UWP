@@ -95,8 +95,6 @@ namespace LearnTHU.Model
             Notice notice = new Notice();
             Regex regex = new Regex(@"hidden;"">([\s\S]*?)&nbsp;[\s]+</td>");
             string text = regex.Match(html).Groups[1].Value;
-            // text = Regex.Replace(text, "<[^>]+>", "");
-            // text = WebUtility.HtmlDecode(text);
             notice.Content = text;
             return notice;
         }
@@ -231,6 +229,11 @@ namespace LearnTHU.Model
                     Url = @"http://learn.tsinghua.edu.cn" + match.Groups[1].Value,
                 };
             }
+        }
+
+        public static void WorkNew(string json, ref Work work)
+        {
+
         }
 
         private static double FileSize(string input)

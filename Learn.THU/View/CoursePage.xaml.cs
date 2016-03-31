@@ -48,7 +48,20 @@ namespace LearnTHU.View
             if (courseId != VM.CourseId)
             {
                 await VM.ChangeCourse(courseId);
-                detailControl.Visibility = Visibility.Collapsed;
+                if (listKind == ListKind.Null || listKind == ListKind.Notice)
+                {
+                    await VM.PrepareNoticeList();
+                }
+                else if (listKind == ListKind.File)
+                {
+                    await VM.PrepareFileList();
+                }
+                else
+                {
+                    await VM.PrepareWorkList();
+                }
+                noticeDetailControl.Visibility = Visibility.Collapsed;
+                workDetailControl.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -59,7 +72,7 @@ namespace LearnTHU.View
 
         private async void noticeList_ItemClick(object sender, ItemClickEventArgs e)
         {
-            detailControl.Visibility = Visibility.Visible;
+            noticeDetailControl.Visibility = Visibility.Visible;
             detailColumn.Width = new GridLength(1, GridUnitType.Star);
 
             await VM.ChangeNoticeDetail(e.ClickedItem as NoticeVM);
@@ -68,13 +81,23 @@ namespace LearnTHU.View
 
         private void BackBtn_Click(object sender, RoutedEventArgs e)
         {
-            detailControl.Visibility = Visibility.Collapsed;
+            noticeDetailControl.Visibility = Visibility.Collapsed;
             detailColumn.Width = new GridLength(0);
         }
 
-        private async void button_Click(object sender, RoutedEventArgs e)
+        private void fileList_ItemClick(object sender, ItemClickEventArgs e)
         {
-            await VM.AAA();
+
+        }
+
+        private void workList_ItemClick(object sender, ItemClickEventArgs e)
+        {
+
+        }
+
+        private void listPivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            new Windows.UI.Popups.MessageDialog("!").ShowAsync();
         }
     }
 }

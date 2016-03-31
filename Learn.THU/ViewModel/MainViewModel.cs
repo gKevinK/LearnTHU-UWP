@@ -44,7 +44,7 @@ namespace LearnTHU.ViewModel
             RaisePropertyChanged("Courses");
         }
 
-        public void RaisePropertyChanged(string propertyName)
+        public void RaisePropertyChanged(string propertyName = "Courses")
         {
             if (PropertyChanged != null)
             {

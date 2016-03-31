@@ -165,19 +165,29 @@ namespace LearnTHU.Model
                 }
             }
 
-            // TODO
+            c.WorkList = new List<Work>();
+            JsonArray workArr = jsonObj.GetNamedArray("Works");
+            foreach (IJsonValue w in workArr)
+            {
+                if (w.ValueType == JsonValueType.Object)
+                {
+                    c.WorkList.Add(jsonToWork(w.GetObject()));
+                }
+            }
             return c;
         }
 
         private static Notice jsonToNotice(JsonObject jsonObj)
         {
-            Notice n = new Notice();
-            n.Id = jsonObj.GetNamedString("Id");
-            n.Title = jsonObj.GetNamedString("Title");
-            n.Publisher = jsonObj.GetNamedString("Publisher");
-            n.Date = DateTime.Parse(jsonObj.GetNamedString("Date"));
-            n.IsRead = jsonObj.GetNamedBoolean("IsRead");
-            n.Content = jsonObj.GetNamedString("Content", "");
+            Notice n = new Notice()
+            {
+                Id = jsonObj.GetNamedString("Id"),
+                Title = jsonObj.GetNamedString("Title"),
+                Publisher = jsonObj.GetNamedString("Publisher"),
+                Date = DateTime.Parse(jsonObj.GetNamedString("Date")),
+                IsRead = jsonObj.GetNamedBoolean("IsRead"),
+                Content = jsonObj.GetNamedString("Content", null),
+            };
             return n;
         }
 
@@ -193,9 +203,33 @@ namespace LearnTHU.Model
                 GroupName = jsonObj.GetNamedString("GroupName"),
                 FileSize = jsonObj.GetNamedNumber("FileSize"),
                 FileName = jsonObj.GetNamedValue("FileName").ValueType == JsonValueType.Null ?
-                    null : jsonObj.GetNamedString("FileName")
+                    null : jsonObj.GetNamedString("FileName"),
             };
             return f;
+        }
+
+        private static Work jsonToWork(JsonObject jsonObj)
+        {
+            Work w = new Work()
+            {
+                Id = jsonObj.GetNamedString("Id"),
+                Title = jsonObj.GetNamedString("Title"),
+                BeginTime = DateTime.Parse(jsonObj.GetNamedString("BeginTime")),
+                EndTime = DateTime.Parse(jsonObj.GetNamedString("EndTime")),
+                Content = jsonObj.GetNamedString("Content", ""),
+                Status = (Work.WorkStatus)(int)jsonObj.GetNamedNumber("Status"),
+                Attachment = null,
+            };
+            if (jsonObj.GetNamedObject("Attachment", null) != null)
+            {
+                WorkFile wf = new WorkFile()
+                {
+                    Name = jsonObj.GetNamedObject("Attachment").GetNamedString("Name"),
+                    Url = jsonObj.GetNamedObject("Attachment").GetNamedString("Url"),
+                };
+                w.Attachment = wf;
+            }
+            return w;
         }
     }
 }
