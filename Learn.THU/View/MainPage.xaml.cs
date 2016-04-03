@@ -25,7 +25,6 @@ namespace LearnTHU.View
     public sealed partial class MainPage : Page
     {
         MainViewModel VM { get; set; } = new MainViewModel();
-
         public MainPage Current = null;
 
         public MainPage()
@@ -38,7 +37,6 @@ namespace LearnTHU.View
 
         private async void SetCourseList(object sender, RoutedEventArgs e)
         {
-            await VM.Model.Load();
             await VM.GetCourseList();
         }
 
@@ -72,6 +70,4 @@ namespace LearnTHU.View
             await new Windows.UI.Popups.MessageDialog(message).ShowAsync();
         }
     }
-
-    
 }

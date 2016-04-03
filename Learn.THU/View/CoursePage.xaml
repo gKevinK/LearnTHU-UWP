@@ -9,18 +9,21 @@
     mc:Ignorable="d">
 
     <Page.Resources>
+        <local:BoolToVisibilityConverter x:Key="boolToVisibilityConverter"/>
+
         <DataTemplate x:Key="NoticeItemTemplate" x:DataType="vm:NoticeVM">
             <Grid Height="48" >
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="24"></ColumnDefinition>
+                    <ColumnDefinition Width="20"></ColumnDefinition>
                     <ColumnDefinition Width="*"></ColumnDefinition>
                     <ColumnDefinition Width="Auto"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
-                <Ellipse Height="10" Width="10" Fill="Red" HorizontalAlignment="Left" Visibility="{x:Bind IsRead}"></Ellipse>
+                <Ellipse Height="10" Width="10" Fill="Red" HorizontalAlignment="Left"
+                         Visibility="{x:Bind IsRead, Mode=OneWay, Converter={StaticResource boolToVisibilityConverter}}"></Ellipse>
                 <TextBlock Grid.Column="1" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
                            Text="{x:Bind Title}"></TextBlock>
                 <TextBlock Grid.Column="2" VerticalAlignment="Center"
-                           Foreground="DarkGray" FontSize="12" Text="{x:Bind Date}"></TextBlock>
+                           FontSize="12" Text="{x:Bind Date}"></TextBlock>
             </Grid>
         </DataTemplate>
 
@@ -33,10 +36,10 @@
                 <TextBlock VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
                            Text="{x:Bind Title}"></TextBlock>
                 <TextBlock Grid.Column="1" VerticalAlignment="Center"
-                           Foreground="DarkGray" FontSize="12" Text="{x:Bind UploadTime}"></TextBlock>
+                           FontSize="12" Text="{x:Bind UploadTime}"></TextBlock>
             </Grid>
         </DataTemplate>
-        
+
         <DataTemplate x:Key="WorkItemTemplate" x:DataType="vm:WorkVM">
             <Grid Height="48">
                 <Grid.ColumnDefinitions>
@@ -46,9 +49,10 @@
                 <TextBlock VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
                            Text="{x:Bind Title}"></TextBlock>
                 <TextBlock Grid.Column="1" VerticalAlignment="Center"
-                           Foreground="DarkGray" FontSize="12" Text="{x:Bind EndDate}"></TextBlock>
+                           FontSize="12" Text="{x:Bind EndDate}"></TextBlock>
             </Grid>
         </DataTemplate>
+        
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -63,38 +67,65 @@
 
         <TextBlock x:Name="TitleName" Text="{x:Bind VM.CourseName, Mode=OneWay}"
                    FontSize="20" VerticalAlignment="Center" Padding="16,0" FontWeight="Medium"/>
-
+        <Button HorizontalAlignment="Right" Width="48" Height="48" Background="Transparent" Click="WebViewBtn_Click">
+            <SymbolIcon Symbol="Page2"></SymbolIcon>
+        </Button>
         <Pivot x:Name="listPivot" Grid.Row="2" SelectionChanged="listPivot_SelectionChanged">
+            <Pivot.Resources>
+                <Thickness x:Key="PivotLandscapeThemePadding">0</Thickness>
+                <Thickness x:Key="PivotNavButtonMargin">0</Thickness>
+                <Thickness x:Key="PivotPortraitThemePadding">0</Thickness>
+                <SolidColorBrush x:Key="SystemControlHighlightListAccentLowBrush" Color="LightYellow"></SolidColorBrush>
+            </Pivot.Resources>
             <PivotItem x:Name="noticePivotItem">
-                <PivotItem.Header>公告</PivotItem.Header>
+                <PivotItem.Header>
+                    <TextBlock FontSize="20">公告</TextBlock>
+                </PivotItem.Header>
                 <ListView x:Name="noticeList" IsItemClickEnabled="True"
                           ItemTemplate="{StaticResource NoticeItemTemplate}"
                           ItemsSource="{x:Bind VM.NoticeList, Mode=OneWay}"
                           ItemClick="noticeList_ItemClick">
+                    <ListView.Resources>
+                        <SolidColorBrush x:Key="SystemControlHighlightListAccentHighBrush" Color="Red"></SolidColorBrush>
+                        <SolidColorBrush x:Key="SystemControlHighlightListAccentLowBrush" Color="Red"></SolidColorBrush>
+                    </ListView.Resources>
                     <ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem">
                             <Setter Property="BorderThickness" Value="0,0,0,1" />
-                            <Setter Property="BorderBrush" Value="Gray" />
+                            <Setter Property="BorderBrush" Value="LightGray" />
                             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            <!--<Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListViewItem">
+                                        <ListViewItemPresenter SelectedBackground="LightBlue"></ListViewItemPresenter>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>-->
                         </Style>
                     </ListView.ItemContainerStyle>
                 </ListView>
             </PivotItem>
-            <PivotItem x:Name="filePivotItem" Header="文件">
+            <PivotItem x:Name="filePivotItem">
+                <PivotItem.Header>
+                    <TextBlock FontSize="20">文件</TextBlock>
+                </PivotItem.Header>
                 <ListView x:Name="fileList" IsItemClickEnabled="True"
-                          ItemTemplate="{StaticResource WorkItemTemplate}"
+                          ItemTemplate="{StaticResource FileItemTemplate}"
                           ItemsSource="{x:Bind VM.FileList, Mode=OneWay}"
                           ItemClick="fileList_ItemClick">
                     <ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem">
                             <Setter Property="BorderThickness" Value="0,0,0,1" />
-                            <Setter Property="BorderBrush" Value="Gray" />
+                            <Setter Property="BorderBrush" Value="LightGray" />
                             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                         </Style>
                     </ListView.ItemContainerStyle>
                 </ListView>
             </PivotItem>
-            <PivotItem Header="作业">
+            <PivotItem x:Name="workPivotItem">
+                <PivotItem.Header>
+                    <TextBlock FontSize="20">作业</TextBlock>
+                </PivotItem.Header>
                 <ListView x:Name="workList" IsItemClickEnabled="True"
                           ItemTemplate="{StaticResource WorkItemTemplate}"
                           ItemsSource="{x:Bind VM.WorkList, Mode=OneWay}"
@@ -102,7 +133,7 @@
                     <ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem">
                             <Setter Property="BorderThickness" Value="0,0,0,1" />
-                            <Setter Property="BorderBrush" Value="Gray" />
+                            <Setter Property="BorderBrush" Value="LightGray" />
                             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                         </Style>
                     </ListView.ItemContainerStyle>
@@ -113,7 +144,7 @@
         <ContentPresenter x:Name="noticeDetailControl"
                           Grid.Column="1" Grid.Row="1"
                           HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                          BorderThickness="1,0,0,0" BorderBrush="Gray">
+                          BorderThickness="1,0,0,0" BorderBrush="LightGray">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"></RowDefinition>

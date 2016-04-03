@@ -35,6 +35,8 @@ namespace LearnTHU.ViewModel
 
         public async Task GetCourseList()
         {
+            if (Model.Loaded == false)
+                await Model.Load();
             var courses = await Model.GetCourseList();
             Courses = new ObservableCollection<CourseVM>();
             foreach (var course in courses)

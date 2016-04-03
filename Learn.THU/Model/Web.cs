@@ -120,6 +120,11 @@ namespace LearnTHU.Model
             Success, Failed, Error
         }
 
+        public async Task Logout()
+        {
+
+        }
+
         public async Task<List<Course>> GetCourseListOld()
         {
             string html = await Request("http://learn.tsinghua.edu.cn/MultiLanguage/lesson/student/MyCourse.jsp?language=cn");

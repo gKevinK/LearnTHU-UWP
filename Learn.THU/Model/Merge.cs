@@ -13,7 +13,7 @@ namespace LearnTHU.Model
             foreach (Course newCourse in newList)
             {
                 Course oldCourse = oldList.Find(oc => oc.Id == newCourse.Id);
-                if (oldCourse == null) break;
+                if (oldCourse == null) continue;
                 newCourse.NoticeList = oldCourse.NoticeList;
                 newCourse.UpdateNoticeTime = oldCourse.UpdateNoticeTime;
                 newCourse.FileList = oldCourse.FileList;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LearnTHU.Model;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -25,6 +26,32 @@ namespace LearnTHU.View
         public Setting()
         {
             InitializeComponent();
+
+            this.Loaded += OnLoad;
+        }
+
+        private void OnLoad(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var vault = new Windows.Security.Credentials.PasswordVault();
+                UserId.Text = vault.FindAllByResource("LearnTHU")[0].UserName;
+            }
+            catch { }
+        }
+
+        private async void Button_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                await MainModel.Current.Save();
+                var vault = new Windows.Security.Credentials.PasswordVault();
+                vault.Remove(vault.FindAllByResource("LearnTHU")[0]);
+            }
+            finally
+            {
+                ((Frame)Window.Current.Content).Navigate(typeof(Login));
+            }
         }
     }
 }

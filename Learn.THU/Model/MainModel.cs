@@ -5,37 +5,29 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
+using Windows.Web.Http;
 
 namespace LearnTHU.Model
 {
     class MainModel
     {
-        public List<Course> CourseList { get; set; }
+        public List<Course> CourseList { get; set; } = new List<Course>();
+        public bool Loaded = false;
         private DateTime lastRefreshTime = new DateTime(2000, 1, 1);
 
-        Web web;
+        private Web web;
 
         public static MainModel Current { get; private set; }
 
         public MainModel()
         {
-            if (Current != null)
-                return;
             if (web == null)
                 web = new Web();
-            if (CourseList == null)
-                CourseList = new List<Course>();
             Current = this;
         }
 
         public MainModel(Web web2)
         {
-            if (Current != null)
-            {
-                Current.web = web2;
-            }
-            if (CourseList == null)
-                CourseList = new List<Course>();
             web = web2;
             Current = this;
         }
@@ -48,16 +40,13 @@ namespace LearnTHU.Model
         public async Task Load()
         {
             await SaveLoad.LoadData(CourseList);
+            Loaded = true;
         }
 
-        public async Task<UpdateResult> RefreshAllData()
+        public async Task<UpdateResult> RefreshCourseList(bool force = false)
         {
-            // TODO
-            return UpdateResult.Success;
-        }
-
-        public async Task<UpdateResult> RefreshCourseList()
-        {
+            if (DateTime.Now - lastRefreshTime < new TimeSpan(2, 0, 0) && force == false)
+                return UpdateResult.No;
             try
             {
                 var newList = await web.GetCourseListOld();
@@ -73,16 +62,13 @@ namespace LearnTHU.Model
 
         public async Task<List<Course>> GetCourseList()
         {
-            if (CourseList == null)
-            {
-                CourseList = await web.GetCourseListOld();
-                lastRefreshTime = DateTime.Now;
-                return CourseList;
-            }
-            if (DateTime.Now - lastRefreshTime > new TimeSpan(2, 0, 0))
-            {
-                await RefreshCourseList();
-            }
+            //if (CourseList == null)
+            //{
+            //    CourseList = await web.GetCourseListOld();
+            //    lastRefreshTime = DateTime.Now;
+            //    return CourseList;
+            //}
+            await RefreshCourseList();
             return CourseList;
         }
 
@@ -103,7 +89,9 @@ namespace LearnTHU.Model
             {
                 throw new Exception("No record of this course.");
             }
-            if (!(course.NeedRefresh || DateTime.Now - course.UpdateNoticeTime > new TimeSpan(2, 0, 0) || forceRefresh))
+            if (!(course.UpdateNoticeTime < course.UpdateTime ||
+                DateTime.Now - course.UpdateNoticeTime > new TimeSpan(2, 0, 0) ||
+                forceRefresh))
             {
                 return UpdateResult.No;
             }
@@ -159,7 +147,9 @@ namespace LearnTHU.Model
             {
                 throw new Exception("No record of this course.");
             }
-            if (!(course.NeedRefresh || DateTime.Now - course.UpdateFileTime > new TimeSpan(2, 0, 0) || forceRefresh))
+            if (!(course.UpdateFileTime < course.UpdateTime ||
+                DateTime.Now - course.UpdateFileTime > new TimeSpan(2, 0, 0) ||
+                forceRefresh))
             {
                 return UpdateResult.No;
             }
@@ -189,7 +179,7 @@ namespace LearnTHU.Model
         public async Task<UpdateResult> RefWorkList(string courseId)
         {
             // TODO
-            return UpdateResult.Success;
+            return UpdateResult.No;
         }
 
         //public async Task<UpdateResult> GetWork(string courseId, string workId)
@@ -197,6 +187,31 @@ namespace LearnTHU.Model
         //    // TODO
         //    return UpdateResult.Success;
         //}
+
+        public HttpRequestMessage GetHRM(string courseId)
+        {
+            Course course = CourseList.Find(c => c.Id == courseId);
+            HttpRequestMessage hrm;
+            if (course.IsNewWebLearning)
+            {
+                string url = string.Format(@"http://learn.cic.tsinghua.edu.cn/f/student/coursehome/{0}", course.Id);
+                hrm = new HttpRequestMessage(HttpMethod.Get, new Uri(url));
+                foreach (System.Net.Cookie cookie in web.cc.GetCookies(new Uri("http://learn.cic.tsinghua.edu.cn")))
+                {
+                    hrm.Headers.Cookie.Add(new Windows.Web.Http.Headers.HttpCookiePairHeaderValue(cookie.Name, cookie.Value));
+                }
+            }
+            else
+            {
+                string url = string.Format(@"http://learn.tsinghua.edu.cn/MultiLanguage/lesson/student/course_locate.jsp?course_id={0}", course.Id);
+                hrm = new HttpRequestMessage(HttpMethod.Get, new Uri(url));
+                foreach (System.Net.Cookie cookie in web.cc.GetCookies(new Uri("http://learn.tsinghua.edu.cn")))
+                {
+                    hrm.Headers.Cookie.Add(new Windows.Web.Http.Headers.HttpCookiePairHeaderValue(cookie.Name, cookie.Value));
+                }
+            }
+            return hrm;
+        }
 
         public enum UpdateResult
         {

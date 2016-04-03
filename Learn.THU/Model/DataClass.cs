@@ -10,13 +10,12 @@ namespace LearnTHU.Model
     {
         public string Id { get; set; }
         public string Name { get; set; }
-        public bool IsNewWebLearning { get; set; }
-        public bool IsActive { get; set; }
-        public bool NeedRefresh { get; set; }
         public DateTime UpdateTime;
         public DateTime UpdateNoticeTime;
         public DateTime UpdateFileTime;
         public DateTime UpdateWorkTime;
+
+        public bool IsNewWebLearning { get { return Id.Length > 10; } }
 
         public List<Notice> NoticeList { get; set; } = new List<Notice>();
         public List<File> FileList { get; set; } = new List<File>();

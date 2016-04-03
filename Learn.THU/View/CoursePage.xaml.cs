@@ -41,6 +41,7 @@ namespace LearnTHU.View
 
             string id = e.Parameter as string;
             await VM.ChangeCourse(id);
+            await VM.PrepareNoticeList();
         }
         
         public async void NavTo(string courseId, ListKind listKind = ListKind.Null, string itemId = null)
@@ -95,9 +96,23 @@ namespace LearnTHU.View
 
         }
 
-        private void listPivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void listPivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            new Windows.UI.Popups.MessageDialog("!").ShowAsync();
+            Pivot pivot = sender as Pivot;
+            switch (pivot.SelectedIndex)
+            {
+                case (0):
+                    await VM.PrepareNoticeList(); break;
+                case (1):
+                    await VM.PrepareFileList(); break;
+                case (2):
+                    await VM.PrepareWorkList(); break;
+            }
+        }
+
+        private void WebViewBtn_Click(object sender, RoutedEventArgs e)
+        {
+            ((Frame)Window.Current.Content).Navigate(typeof(WebsitePage), VM.GetHRM());
         }
     }
 }

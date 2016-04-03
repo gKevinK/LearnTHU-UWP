@@ -3,7 +3,7 @@
   <Identity Name="79ac4d38-88b8-49c8-8eb0-bfecd0d69602" Publisher="CN=Kevin" Version="0.1.1.0" />
   <mp:PhoneIdentity PhoneProductId="79ac4d38-88b8-49c8-8eb0-bfecd0d69602" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
-    <DisplayName>Learn.THU</DisplayName>
+    <DisplayName>Learn@THU</DisplayName>
     <PublisherDisplayName>Kevin</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
@@ -16,7 +16,10 @@
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="Learn.THU.App">
       <uap:VisualElements DisplayName="Learn@THU" Square150x150Logo="Assets\Square150x150Logo.png" Square44x44Logo="Assets\Square44x44Logo.png" Description="清华大学网络学堂第三方客户端" BackgroundColor="transparent">
-        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png">
+        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" Square71x71Logo="Assets\Square71x71Logo.png" Square310x310Logo="Assets\Square310x310Logo.png">
+          <uap:ShowNameOnTiles>
+            <uap:ShowOn Tile="square310x310Logo" />
+          </uap:ShowNameOnTiles>
         </uap:DefaultTile>
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
       </uap:VisualElements>

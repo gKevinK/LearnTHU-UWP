@@ -23,18 +23,16 @@ namespace LearnTHU.Model
             {
                 Course course = new Course()
                 {
-                    Name = match.Groups[2].Value.Trim(), IsActive = true, NeedRefresh = true,
+                    Name = match.Groups[2].Value.Trim()
                 };
                 string link = match.Groups[1].Value;
                 if (link.Contains("course_id"))
                 {
                     course.Id = Regex.Replace(link, ".+id=", "");
-                    course.IsNewWebLearning = false;
                 }
                 else
                 {
                     course.Id = Regex.Replace(link, ".+coursehome/", "");
-                    course.IsNewWebLearning = true;
                 }
                 
                 course.InitNewCount(int.Parse(match.Groups[4].Value),
@@ -134,7 +132,7 @@ namespace LearnTHU.Model
                     fileList.Add(new File()
                     {
                         Id = m.Groups[1].Value,
-                        Name = m.Groups[2].Value.Trim(),
+                        Name = WebUtility.HtmlDecode(Regex.Replace(m.Groups[2].Value.Trim(), @"<[^>]+>", "")),
                         Note = m.Groups[3].Value,
                         GroupName = groupName,
                         FileSize = FileSize(m.Groups[4].Value),

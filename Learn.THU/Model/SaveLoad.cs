@@ -15,7 +15,6 @@ namespace LearnTHU.Model
             MainModel model = MainModel.Current;
             if (model == null) return;
             var vault = new Windows.Security.Credentials.PasswordVault();
-            //if (vault.RetrieveAll().Count == 0 || vault.FindAllByResource("LearnTHU")[0].Password == "") return;
             string userId = vault.FindAllByResource("LearnTHU")[0].UserName;
             StorageFolder storageFolder = ApplicationData.Current.LocalFolder;
 
@@ -29,7 +28,6 @@ namespace LearnTHU.Model
             try
             {
                 StorageFile file = await storageFolder.CreateFileAsync(userId + ".json", CreationCollisionOption.ReplaceExisting);
-                //StorageFile file = await storageFolder.GetFileAsync(userId + ".json");
                 await FileIO.WriteTextAsync(file, json);
             }
             catch (Exception e)
@@ -45,6 +43,13 @@ namespace LearnTHU.Model
             JsonObject jsonObj = new JsonObject();
             jsonObj["Id"] = JsonValue.CreateStringValue(c.Id);
             jsonObj["Name"] = JsonValue.CreateStringValue(c.Name);
+            jsonObj["UpdateTime"] = JsonValue.CreateStringValue(c.UpdateTime.ToString());
+            jsonObj["UpdateNoticeTime"] = JsonValue.CreateStringValue(c.UpdateNoticeTime.ToString());
+            jsonObj["UpdateFileTime"] = JsonValue.CreateStringValue(c.UpdateFileTime.ToString());
+            jsonObj["UpdateWorkTime"] = JsonValue.CreateStringValue(c.UpdateWorkTime.ToString());
+            jsonObj["nnc"] = JsonValue.CreateNumberValue(c.NewNoticeCountOriginal);
+            jsonObj["nfc"] = JsonValue.CreateNumberValue(c.NewFileCountOriginal);
+            jsonObj["uwc"] = JsonValue.CreateNumberValue(c.UnhandWorkCountOriginal);
 
             JsonArray notices = new JsonArray();
             foreach (Notice n in c.NoticeList)
@@ -144,6 +149,13 @@ namespace LearnTHU.Model
 
             c.Id = jsonObj.GetNamedString("Id");
             c.Name = jsonObj.GetNamedString("Name");
+            c.UpdateTime = DateTime.Parse(jsonObj.GetNamedString("UpdateTime"));
+            c.UpdateNoticeTime = DateTime.Parse(jsonObj.GetNamedString("UpdateNoticeTime"));
+            c.UpdateFileTime = DateTime.Parse(jsonObj.GetNamedString("UpdateFileTime"));
+            c.UpdateWorkTime = DateTime.Parse(jsonObj.GetNamedString("UpdateWorkTime"));
+            c.NewNoticeCountOriginal = (int)jsonObj.GetNamedNumber("nnc");
+            c.NewFileCountOriginal = (int)jsonObj.GetNamedNumber("nfc");
+            c.UnhandWorkCountOriginal = (int)jsonObj.GetNamedNumber("uwc");
 
             c.NoticeList = new List<Notice>();
             JsonArray noticeArr = jsonObj.GetNamedArray("Notices");
