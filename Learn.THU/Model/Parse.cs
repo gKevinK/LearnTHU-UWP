@@ -37,6 +37,7 @@ namespace LearnTHU.Model
                 
                 course.InitNewCount(int.Parse(match.Groups[4].Value),
                     int.Parse(match.Groups[5].Value), int.Parse(match.Groups[3].Value));
+                course.UpdateTime = DateTime.Now;
                 courseList.Add(course);
             }
             return courseList;
@@ -189,13 +190,27 @@ namespace LearnTHU.Model
             return files;
         }
 
+        public static void FileListNew2(List<File> list, string json)
+        {
+            JsonObject jsonObj = JsonObject.Parse(json);
+            if (jsonObj.GetNamedString("message") != "success") return;
+            foreach (IJsonValue jv in jsonObj.GetNamedArray("resultList"))
+            {
+                if (jv.ValueType == JsonValueType.String)
+                {
+                    string id = jv.GetString();
+                    list.Find(f => f.Id == id).Status = File.FileStatus.Undownload;
+                }
+            }
+        }
+
         public static List<Work> WorkListOld(string html)
         {
             List<Work> workList = new List<Work>();
-            string pattern = @"hom_wk_detail[\.]jsp[?](.+)"">(.+)</a></td>
+            string pattern = @"hom_wk_detail\.jsp\?id=(.+?)&.+?"">(.+)</a></td>
 .+10%"">(.+)</td>
 .+10%"">(.+)</td>
-.+15%"" >([\s\S]+?)</td>";
+.+15%"" >([\s\S]+?)</td>[\s\S]+?查看批阅""(.+)type=""button";
             Regex regex = new Regex(pattern); ;
             foreach (Match match in regex.Matches(html))
             {
@@ -207,13 +222,57 @@ namespace LearnTHU.Model
                     EndTime = DateTime.Parse(match.Groups[4].Value).AddHours(23).AddMinutes(59),
                     Status = match.Groups[5].Value.Trim() == "已经提交" ? Work.WorkStatus.Submitted : Work.WorkStatus.Unhand,
                 };
+                if (match.Groups[6].Value.Length < 5)
+                {
+                    work.Status = Work.WorkStatus.Marked;
+                }
                 workList.Add(work);
             }
             return workList;
         }
 
-        public static void WorkOld(string html, ref Work work)
+        public static List<Work> WorkListNew(string json)
         {
+            List<Work> works = new List<Work>();
+            JsonObject jsonObj = JsonObject.Parse(json);
+            if (jsonObj.GetNamedString("message", "") != "success")
+            {
+                throw new Exception("作业列表获取失败");
+            }
+            JsonArray jsonArr = jsonObj.GetNamedArray("resultList");
+            foreach (IJsonValue result in jsonArr)
+            {
+                if (result.ValueType == JsonValueType.Object)
+                {
+                    JsonObject workObj = result.GetObject();
+                    JsonObject record = workObj.GetNamedObject("courseHomeworkRecord");
+                    JsonObject info = workObj.GetNamedObject("courseHomeworkInfo");
+                    Work w = new Work()
+                    {
+                        Id = record.GetNamedString("homewkId"),
+                        Title = info.GetNamedString("title"),
+                        Content = info.GetNamedString("detail"),
+                        BeginTime = new DateTime(1970, 1, 1).AddMilliseconds(info.GetNamedNumber("beginDate")),
+                        EndTime = new DateTime(1970, 1, 1).AddMilliseconds(info.GetNamedNumber("endDate")),
+                    };
+                    switch (record.GetNamedString("status"))
+                    {
+                        case "3":
+                            w.Status = Work.WorkStatus.Marked; break;
+                        case "1":
+                            w.Status = Work.WorkStatus.Submitted; break;
+                        case "0":
+                            w.Status = Work.WorkStatus.Unhand; break;
+                    }
+                    works.Add(w);
+                }
+            }
+            return works;
+        }
+
+        public static Work WorkOld(string html)
+        {
+            Work work = new Work();
             Regex regex = new Regex(@"wrap=VIRTUAL>(.*?)</textarea>[\s\S+?]&nbsp;([\s\S]+?)</td>");
             work.Content = regex.Match(html).Groups[1].Value;
             if (regex.Match(html).Groups[2].Value.Contains("无相关文件"))
@@ -227,6 +286,7 @@ namespace LearnTHU.Model
                     Url = @"http://learn.tsinghua.edu.cn" + match.Groups[1].Value,
                 };
             }
+            return work;
         }
 
         public static void WorkNew(string json, ref Work work)

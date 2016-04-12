@@ -31,15 +31,16 @@ namespace LearnTHU.Model
         public int NewFileCount
         {
             get { return (UpdateTime >= UpdateFileTime) ?
-                    NewFileCountOriginal : FileList.Count(file => file.Status == File.FileStatus.Undownload); }
+                    NewFileCountOriginal - FileList.Count(file => file.Status == File.FileStatus.Ignored)
+                    : FileList.Count(file => file.Status == File.FileStatus.Undownload); }
         }
 
         public int UnhandWorkCountOriginal;
         public int UnhandWorkCount
         {
             get { return (UpdateTime >= UpdateWorkTime) ?
-                    UnhandWorkCountOriginal - WorkList.Count(work => work.Status == Work.WorkStatus.Ignored) :
-                    WorkList.Count(work => work.Status == Work.WorkStatus.Unhand); }
+                    UnhandWorkCountOriginal - WorkList.Count(work => work.Status == Work.WorkStatus.Ignored)
+                    : WorkList.Count(work => work.Status == Work.WorkStatus.Unhand); }
         }
 
         public void InitNewCount(int newNotice, int newFile, int unhandWork)
@@ -88,7 +89,7 @@ namespace LearnTHU.Model
 
         public enum WorkStatus
         {
-            Unhand, Submitted, Ignored
+            Unhand, Submitted, Ignored, Marked
         }
         public WorkStatus Status { get; set; }
     }

@@ -62,12 +62,6 @@ namespace LearnTHU.Model
 
         public async Task<List<Course>> GetCourseList()
         {
-            //if (CourseList == null)
-            //{
-            //    CourseList = await web.GetCourseListOld();
-            //    lastRefreshTime = DateTime.Now;
-            //    return CourseList;
-            //}
             await RefreshCourseList();
             return CourseList;
         }
@@ -160,10 +154,22 @@ namespace LearnTHU.Model
             return UpdateResult.Success;
         }
 
-        public async Task<UpdateResult> DowloadFile(string courseId, string fileId)
+        public async Task<UpdateResult> DownloadFile(File f)
         {
-            // TODO
+            if (f.Id.Contains("uploadFile/downloadFile"))
+            {
+                await web.DownloadFile("http://learn.tsinghua.edu.cn" + f.Id);
+            }
+            else
+            {
+                await web.DownloadFile("http://learn.cic.tsinghua.edu.cn/b/resource/downloadFileStream/" + f.Id, f.FileName);
+            }
             return UpdateResult.Success;
+        }
+
+        public async Task DownloadFile(string url)
+        {
+            await web.DownloadFile(url);
         }
 
         public List<Work> GetWorkList(string courseId)
@@ -178,15 +184,20 @@ namespace LearnTHU.Model
 
         public async Task<UpdateResult> RefWorkList(string courseId)
         {
-            // TODO
-            return UpdateResult.No;
+            Course course = CourseList.Find(c => c.Id == courseId);
+            List<Work> newList = course.IsNewWebLearning ?
+                await web.GetWorkListNew(course.Id):await web.GetWorkListOld(course.Id);
+            Merge.WorkList(course.WorkList, newList);
+            return UpdateResult.Success;
         }
 
-        //public async Task<UpdateResult> GetWork(string courseId, string workId)
-        //{
-        //    // TODO
-        //    return UpdateResult.Success;
-        //}
+        public async Task<UpdateResult> RefWork(string courseId, Work work)
+        {
+            Work workWithContent = await web.GetWorkContent(courseId, work.Id);
+            work.Content = workWithContent.Content;
+            work.Attachment = workWithContent.Attachment;
+            return UpdateResult.Success;
+        }
 
         public HttpRequestMessage GetHRM(string courseId)
         {

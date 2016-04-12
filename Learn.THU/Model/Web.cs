@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using System.Diagnostics;
+using Windows.Networking.BackgroundTransfer;
+using Windows.Storage;
 
 namespace LearnTHU.Model
 {
@@ -170,7 +172,10 @@ namespace LearnTHU.Model
         {
             string url = string.Format(@"http://learn.cic.tsinghua.edu.cn/b/myCourse/tree/getCoursewareTreeData/{0}/0", courseId);
             string json = await Request(url);
-            return Parse.FileListNew(json);
+            var list = Parse.FileListNew(json);
+            string json2 = await Request(@"http://learn.cic.tsinghua.edu.cn/b/courseFileAccess/getUnreadFileIdList/" + courseId);
+            Parse.FileListNew2(list, json2);
+            return list;
         }
 
         public async Task<List<Work>> GetWorkListOld(string courseId)
@@ -180,7 +185,47 @@ namespace LearnTHU.Model
             return Parse.WorkListOld(html);
         }
 
+        public async Task<List<Work>> GetWorkListNew(string courseId)
+        {
+            string url = string.Format(@"http://learn.cic.tsinghua.edu.cn/b/myCourse/homework/list4Student/{0}/0", courseId);
+            string json = await Request(url);
+            return Parse.WorkListNew(json);
+        }
 
+        public async Task<Work> GetWorkContent(string courseId, string workId)
+        {
+            string url = string.Format(@"http://learn.tsinghua.edu.cn/MultiLanguage/lesson/student/hom_wk_detail.jsp?id={1}&course_id={0}&rec_id=null", courseId, workId);
+            string html = await Request(url);
+            return Parse.WorkOld(html);
+        }
+
+        public async Task DownloadFile(string url, string fileName = null)
+        {
+            BackgroundDownloader bd = new BackgroundDownloader();
+            string cookie = cc.GetCookieHeader(new Uri("http://learn.tsinghua.edu.cn"));
+            bd.SetRequestHeader("Cookie", cookie);
+            StorageFile fileTemp = await ApplicationData.Current.LocalCacheFolder.CreateFileAsync(new Random().Next().ToString());
+            var downOpr = bd.CreateDownload(new Uri(url), fileTemp);
+            await downOpr.StartAsync();
+
+            var picker = new Windows.Storage.Pickers.FileSavePicker();
+            if (fileName != null)
+            {
+                picker.SuggestedFileName = fileName;
+            }
+            else
+            {
+                string head = downOpr.GetResponseInformation().Headers["Content-Disposition"];
+                fileName = Regex.Replace(head, @".+filename=""", "");
+                fileName = fileName.Substring(0, fileName.Length - 1);
+                fileName = Regex.Replace(fileName, "_?[0-9]{6,}_?", "");
+                picker.SuggestedFileName = fileName;
+            }
+            string typeName = new FileInfo(fileName).Extension;
+            picker.FileTypeChoices.Add("文件", new List<string>() { typeName });
+            StorageFile file = await picker.PickSaveFileAsync();
+            await fileTemp.MoveAndReplaceAsync(file);
+        }
 
         /// <summary>
         /// 访问Url，获取返回数据
@@ -198,7 +243,7 @@ namespace LearnTHU.Model
                 var vault = new Windows.Security.Credentials.PasswordVault();
                 var va = vault.FindAllByResource("LearnTHU");
                 string userId = vault.FindAllByResource("LearnTHU")[0].UserName;
-                string passwd = vault.FindAllByResource("LearnTHU")[0].Password;
+                string passwd = vault.Retrieve("LearnTHU", userId).Password;
                 LoginResult result;
                 if (url.Contains("learn.cic"))
                 {
@@ -254,6 +299,14 @@ namespace LearnTHU.Model
             ms.Seek(0, SeekOrigin.Begin);
             string a = new StreamReader(ms, Encoding.UTF8).ReadToEnd();
             return a;
+        }
+
+        private async Task<string> GetFileName(string url)
+        {
+            HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
+            req.CookieContainer = cc;
+            HttpWebResponse res = (HttpWebResponse)await req.GetResponseAsync();
+            return "*.*";
         }
     }
 }

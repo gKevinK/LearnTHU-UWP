@@ -40,29 +40,30 @@ namespace LearnTHU.View
             base.OnNavigatedTo(e);
 
             string id = e.Parameter as string;
-            await VM.ChangeCourse(id);
-            await VM.PrepareNoticeList();
+            await NavTo(id);
         }
         
-        public async void NavTo(string courseId, ListKind listKind = ListKind.Null, string itemId = null)
+        public async Task NavTo(string courseId, ListKind listKind = ListKind.Null, string itemId = null)
         {
             if (courseId != VM.CourseId)
             {
                 await VM.ChangeCourse(courseId);
                 if (listKind == ListKind.Null || listKind == ListKind.Notice)
                 {
+                    listPivot.SelectedIndex = 0;
                     await VM.PrepareNoticeList();
                 }
                 else if (listKind == ListKind.File)
                 {
+                    listPivot.SelectedIndex = 1;
                     await VM.PrepareFileList();
                 }
                 else
                 {
+                    listPivot.SelectedIndex = 2;
                     await VM.PrepareWorkList();
                 }
-                noticeDetailControl.Visibility = Visibility.Collapsed;
-                workDetailControl.Visibility = Visibility.Collapsed;
+                HideDetailColumn();
             }
         }
 
@@ -78,12 +79,12 @@ namespace LearnTHU.View
 
             await VM.ChangeNoticeDetail(e.ClickedItem as NoticeVM);
             detailContentWebView.NavigateToString(VM.NoticeDetail.Content);
+            MainViewModel.Current.RaiseCourseDataChanged(VM.CourseId);
         }
 
         private void BackBtn_Click(object sender, RoutedEventArgs e)
         {
-            noticeDetailControl.Visibility = Visibility.Collapsed;
-            detailColumn.Width = new GridLength(0);
+            HideDetailColumn();
         }
 
         private void fileList_ItemClick(object sender, ItemClickEventArgs e)
@@ -91,14 +92,21 @@ namespace LearnTHU.View
 
         }
 
-        private void workList_ItemClick(object sender, ItemClickEventArgs e)
+        private async void workList_ItemClick(object sender, ItemClickEventArgs e)
         {
+            workDetailControl.Visibility = Visibility.Visible;
+            detailColumn.Width = new GridLength(1, GridUnitType.Star);
 
+            WorkVM workVM = e.ClickedItem as WorkVM;
+            await VM.ChangeWorkDetail(workVM);
+            workContent.NavigateToString(workVM.Content);
         }
 
         private async void listPivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Pivot pivot = sender as Pivot;
+            HideDetailColumn();
+            SetNavBtn(pivot.SelectedIndex);
             switch (pivot.SelectedIndex)
             {
                 case (0):
@@ -113,6 +121,50 @@ namespace LearnTHU.View
         private void WebViewBtn_Click(object sender, RoutedEventArgs e)
         {
             ((Frame)Window.Current.Content).Navigate(typeof(WebsitePage), VM.GetHRM());
+        }
+
+        private void HideDetailColumn()
+        {
+            noticeDetailControl.Visibility = Visibility.Collapsed;
+            workDetailControl.Visibility = Visibility.Collapsed;
+            detailColumn.Width = new GridLength(0);
+        }
+
+        private void MenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            var workVM = sender as WorkVM;
+            workVM.Status = Model.Work.WorkStatus.Ignored;
+        }
+
+        private void Border0_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            listPivot.SelectedIndex = 0;
+        }
+
+        private void Border1_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            listPivot.SelectedIndex = 1;
+
+        }
+        private void Border2_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            listPivot.SelectedIndex = 2;
+        }
+
+        private void SetNavBtn(int index)
+        {
+            noticeBtnRec.Visibility = Visibility.Collapsed;
+            fileBtnRec.Visibility = Visibility.Collapsed;
+            workBtnRec.Visibility = Visibility.Collapsed;
+            switch (index)
+            {
+                case 0:
+                    noticeBtnRec.Visibility = Visibility.Visible; break;
+                case 1:
+                    fileBtnRec.Visibility = Visibility.Visible; break;
+                case 2:
+                    workBtnRec.Visibility = Visibility.Visible; break;
+            }
         }
     }
 }

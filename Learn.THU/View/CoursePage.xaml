@@ -11,6 +11,10 @@
     <Page.Resources>
         <local:BoolToVisibilityConverter x:Key="boolToVisibilityConverter"/>
 
+        <MenuFlyout x:Key="WorkFlyout">
+            <MenuFlyoutItem Text="忽略" Click="MenuFlyoutItem_Click"/>
+        </MenuFlyout>
+
         <DataTemplate x:Key="NoticeItemTemplate" x:DataType="vm:NoticeVM">
             <Grid Height="48" >
                 <Grid.ColumnDefinitions>
@@ -31,32 +35,89 @@
             <Grid Height="48">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"></ColumnDefinition>
-                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    <ColumnDefinition Width="60"></ColumnDefinition>
+                    <ColumnDefinition Width="48"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
                 <TextBlock VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
                            Text="{x:Bind Title}"></TextBlock>
                 <TextBlock Grid.Column="1" VerticalAlignment="Center"
                            FontSize="12" Text="{x:Bind UploadTime}"></TextBlock>
+                <Button Grid.Column="2" Width="48" Height="48" Background="Transparent" Click="{x:Bind Download}">
+                    <SymbolIcon Symbol="Download"/>
+                </Button>
             </Grid>
         </DataTemplate>
 
-        <DataTemplate x:Key="WorkItemTemplate" x:DataType="vm:WorkVM">
+        <!--<DataTemplate x:Key="WorkItemTemplate" x:DataType="vm:WorkVM">
             <Grid Height="48">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"></ColumnDefinition>
-                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    <ColumnDefinition Width="40"></ColumnDefinition>
+                    <ColumnDefinition Width="60"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
+
                 <TextBlock VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
                            Text="{x:Bind Title}"></TextBlock>
-                <TextBlock Grid.Column="1" VerticalAlignment="Center"
+                <TextBlock x:Name="unhand" Grid.Column="1" Text="未交" FontSize="12" VerticalAlignment="Center"></TextBlock>
+                <TextBlock Grid.Column="2" VerticalAlignment="Center"
                            FontSize="12" Text="{x:Bind EndDate}"></TextBlock>
+            </Grid>
+        </DataTemplate>-->
+
+        <DataTemplate x:Key="WorkDetailTemplate" x:DataType="vm:WorkVM">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="48"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="48"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Button Click="BackBtn_Click" Background="Transparent" Width="48" Height="48">
+                    <SymbolIcon Symbol="Forward"></SymbolIcon>
+                </Button>
+                <TextBlock Grid.Column="1" Grid.ColumnSpan="3" FontSize="18" FontWeight="SemiBold" Padding="16,0"
+                           Text="{x:Bind Title}" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" Padding="12,12,0,12" >
+                    <TextBlock Text="发布日期：" FontSize="12" VerticalAlignment="Center"></TextBlock>
+                    <TextBlock VerticalAlignment="Center" FontSize="12"
+                               Text=""></TextBlock>
+                </StackPanel>
+                <StackPanel Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Orientation="Horizontal">
+                    <TextBlock Text="截止日期：" FontSize="12" Grid.Column="2" VerticalAlignment="Center" Padding="12,0,0,0"></TextBlock>
+                    <TextBlock VerticalAlignment="Center" FontSize="12"
+                               Text="{x:Bind EndDate}"></TextBlock>
+                </StackPanel>
+                <WebView Name="workContent" Grid.Row="2" Grid.ColumnSpan="4" HorizontalAlignment="Stretch" Margin="16"/>
             </Grid>
         </DataTemplate>
         
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="state">
+                <VisualState x:Name="NormalState">
+                    <VisualState.Setters>
+                        <Setter Target="detailColumn.Width" Value="*"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="NoticeDetailState">
+                    <VisualState.Setters>
+                        <Setter Target="detailColumn.Width" Value="0"/>
+                        <Setter Target="noticeDetailControl.Visibility" Value="Collapsed"/>
+                        <Setter Target="workDetailControl.Visibility" Value="Collapsed"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        
         <Grid.RowDefinitions>
+            <RowDefinition Height="48"></RowDefinition>
             <RowDefinition Height="48"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
@@ -67,10 +128,65 @@
 
         <TextBlock x:Name="TitleName" Text="{x:Bind VM.CourseName, Mode=OneWay}"
                    FontSize="20" VerticalAlignment="Center" Padding="16,0" FontWeight="Medium"/>
-        <Button HorizontalAlignment="Right" Width="48" Height="48" Background="Transparent" Click="WebViewBtn_Click">
-            <SymbolIcon Symbol="Page2"></SymbolIcon>
+        <Button HorizontalAlignment="Right" Width="48" Height="48" ToolTipService.ToolTip="打开课程页面&#13;&#13;注意：暂时无法上传下载文件"
+                Background="Transparent" Click="WebViewBtn_Click">
+            <SymbolIcon Symbol="Page2"/>
         </Button>
-        <Pivot x:Name="listPivot" Grid.Row="2" SelectionChanged="listPivot_SelectionChanged">
+        <Grid Grid.Row="1" Grid.ColumnSpan="2" Height="48" Canvas.ZIndex="1" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" MaxWidth="180"/>
+                <ColumnDefinition Width="*" MaxWidth="180"/>
+                <ColumnDefinition Width="*" MaxWidth="180"/>
+                <ColumnDefinition Width="3*"/>
+            </Grid.ColumnDefinitions>
+            <Border Tapped="Border0_Tapped" BorderThickness="0" Background="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="32"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="公告" Margin="16,0" FontSize="18"></TextBlock>
+                    <Ellipse x:Name="noticeBack" Grid.Column="2" Width="24" Height="24" Fill="#7FFF7F7F" Visibility="Collapsed"/>
+                    <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center"
+                               Text="{x:Bind VM.NoticeNum, Mode=OneWay}"></TextBlock>
+                    <Rectangle x:Name="noticeBtnRec" Fill="Blue" Grid.ColumnSpan="4" Height="4" VerticalAlignment="Bottom"></Rectangle>
+                </Grid>
+            </Border>
+            <Border Tapped="Border1_Tapped" Grid.Column="1" BorderThickness="0" Background="Transparent"
+                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="32"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="文件" Margin="16,0" FontSize="18"></TextBlock>
+                    <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center"
+                               Text="{x:Bind VM.FileNum, Mode=OneWay}"></TextBlock>
+                    <Ellipse x:Name="fileBack" Width="24" Height="24" Fill="#7FFF7F7F" Visibility="Collapsed"/>
+                    <Rectangle x:Name="fileBtnRec" Fill="Blue" Grid.ColumnSpan="4" Height="4" VerticalAlignment="Bottom"></Rectangle>
+                </Grid>
+            </Border>
+            <Border Tapped="Border2_Tapped" Grid.Column="2" BorderThickness="0" Background="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="32"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="作业" Margin="16,0" FontSize="18"></TextBlock>
+                    <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center"
+                               Text="{x:Bind VM.WorkNum, Mode=OneWay}"></TextBlock>
+                    <Ellipse x:Name="workBack" Width="24" Height="24" Fill="#7FFF7F7F" Visibility="Collapsed"/>
+                    <Rectangle x:Name="workBtnRec" Fill="Blue" Grid.ColumnSpan="4" Height="4" VerticalAlignment="Bottom"></Rectangle>
+                </Grid>
+            </Border>
+        </Grid>
+        <Pivot x:Name="listPivot" Grid.Row="2" Margin="-12,-48,-12,0" SelectionChanged="listPivot_SelectionChanged">
             <Pivot.Resources>
                 <Thickness x:Key="PivotLandscapeThemePadding">0</Thickness>
                 <Thickness x:Key="PivotNavButtonMargin">0</Thickness>
@@ -78,39 +194,21 @@
                 <SolidColorBrush x:Key="SystemControlHighlightListAccentLowBrush" Color="LightYellow"></SolidColorBrush>
             </Pivot.Resources>
             <PivotItem x:Name="noticePivotItem">
-                <PivotItem.Header>
-                    <TextBlock FontSize="20">公告</TextBlock>
-                </PivotItem.Header>
                 <ListView x:Name="noticeList" IsItemClickEnabled="True"
                           ItemTemplate="{StaticResource NoticeItemTemplate}"
                           ItemsSource="{x:Bind VM.NoticeList, Mode=OneWay}"
                           ItemClick="noticeList_ItemClick">
-                    <ListView.Resources>
-                        <SolidColorBrush x:Key="SystemControlHighlightListAccentHighBrush" Color="Red"></SolidColorBrush>
-                        <SolidColorBrush x:Key="SystemControlHighlightListAccentLowBrush" Color="Red"></SolidColorBrush>
-                    </ListView.Resources>
                     <ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem">
                             <Setter Property="BorderThickness" Value="0,0,0,1" />
                             <Setter Property="BorderBrush" Value="LightGray" />
                             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                            <!--<Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="ListViewItem">
-                                        <ListViewItemPresenter SelectedBackground="LightBlue"></ListViewItemPresenter>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>-->
                         </Style>
                     </ListView.ItemContainerStyle>
                 </ListView>
             </PivotItem>
             <PivotItem x:Name="filePivotItem">
-                <PivotItem.Header>
-                    <TextBlock FontSize="20">文件</TextBlock>
-                </PivotItem.Header>
                 <ListView x:Name="fileList" IsItemClickEnabled="True"
-                          ItemTemplate="{StaticResource FileItemTemplate}"
                           ItemsSource="{x:Bind VM.FileList, Mode=OneWay}"
                           ItemClick="fileList_ItemClick">
                     <ListView.ItemContainerStyle>
@@ -120,14 +218,15 @@
                             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                         </Style>
                     </ListView.ItemContainerStyle>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <local:FileItemControl/>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
                 </ListView>
             </PivotItem>
             <PivotItem x:Name="workPivotItem">
-                <PivotItem.Header>
-                    <TextBlock FontSize="20">作业</TextBlock>
-                </PivotItem.Header>
                 <ListView x:Name="workList" IsItemClickEnabled="True"
-                          ItemTemplate="{StaticResource WorkItemTemplate}"
                           ItemsSource="{x:Bind VM.WorkList, Mode=OneWay}"
                           ItemClick="workList_ItemClick">
                     <ListView.ItemContainerStyle>
@@ -137,12 +236,17 @@
                             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                         </Style>
                     </ListView.ItemContainerStyle>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <local:WorkItemControl/>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
                 </ListView>
             </PivotItem>
         </Pivot>
 
-        <ContentPresenter x:Name="noticeDetailControl"
-                          Grid.Column="1" Grid.Row="1"
+        <ContentPresenter x:Name="noticeDetailControl" Visibility="Collapsed"
+                          Grid.Column="1" Grid.RowSpan="3"
                           HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                           BorderThickness="1,0,0,0" BorderBrush="LightGray">
             <Grid>
@@ -182,14 +286,42 @@
         </ContentPresenter>
 
         <ContentPresenter x:Name="workDetailControl"
-                          Grid.Column="1" Grid.Row="1"
+                          Grid.Column="1" Grid.RowSpan="3"
                           HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                          BorderThickness="1,0,0,0" BorderBrush="Gray"
-                          Content="{x:Bind VM.WorkDetail, Mode=OneWay}">
-            
+                          BorderThickness="1,0,0,0" BorderBrush="Gray">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="48"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="48"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Button Click="BackBtn_Click" Background="Transparent" Width="48" Height="48">
+                    <SymbolIcon Symbol="Forward"></SymbolIcon>
+                </Button>
+                <TextBlock Grid.Column="1" Grid.ColumnSpan="2" FontSize="18" FontWeight="SemiBold" Padding="16,0"
+                           Text="{x:Bind VM.WorkDetail.Title, Mode=OneWay}" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                <Button Grid.Column="3" Background="Transparent" Width="48" Height="48" ToolTipService.ToolTip="有附件"
+                        Visibility="{x:Bind VM.WorkDetail.HaveAttachment, Converter={StaticResource BoolToVisibility}}">
+                    <SymbolIcon Symbol="Attach"></SymbolIcon>
+                </Button>
+                <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" Padding="12,12,0,12" >
+                    <TextBlock Text="发布日期：" FontSize="12" VerticalAlignment="Center"></TextBlock>
+                    <TextBlock VerticalAlignment="Center" FontSize="12"
+                               Text="{x:Bind VM.WorkDetail.BeginDate, Mode=OneWay}"></TextBlock>
+                </StackPanel>
+                <StackPanel Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Orientation="Horizontal">
+                    <TextBlock Text="截止日期：" FontSize="12" Grid.Column="2" VerticalAlignment="Center" Padding="12,0,0,0"></TextBlock>
+                    <TextBlock VerticalAlignment="Center" FontSize="12"
+                               Text="{x:Bind VM.WorkDetail.EndDate, Mode=OneWay}"></TextBlock>
+                </StackPanel>
+                <WebView x:Name="workContent" Grid.Row="2" Grid.ColumnSpan="4" HorizontalAlignment="Stretch" Margin="16"/>
+            </Grid>
         </ContentPresenter>
-        
-        <!--<Button x:Name="button" Content="Button" HorizontalAlignment="Left" Margin="10,11,0,0" VerticalAlignment="Top" Grid.Column="1" Click="button_Click"/>-->
-        <!--<ContentControl x:Name="detailControl"></ContentControl>-->
     </Grid>
 </Page>

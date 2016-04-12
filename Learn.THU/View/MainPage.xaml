@@ -10,13 +10,14 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <DataTemplate x:Key="NavMenuItemTemplate" x:DataType="vm:CourseVM">
+        
+        <!--<DataTemplate x:Key="NavMenuItemTemplate" x:DataType="vm:CourseVM">
             <Grid Height="40" Width="280">
-                <!--<VisualStateManager.VisualStateGroups>
+                <VisualStateManager.VisualStateGroups>
                     <VisualStateGroup x:Name="noticeState">
                         <VisualState>
                             <VisualState.StateTriggers>
-                                <StateTrigger IsActive="{x:Bind HaveNewNotice}"></StateTrigger>
+                                <StateTrigger IsActive="{Binding NewNotice, Converter={StaticResource IntToBool}}"></StateTrigger>
                             </VisualState.StateTriggers>
                             <VisualState.Setters>
                                 <Setter Target="noticeBack.Visibility" Value="Visible" />
@@ -27,7 +28,7 @@
                     <VisualStateGroup x:Name="fileState">
                         <VisualState>
                             <VisualState.StateTriggers>
-                                <StateTrigger IsActive="{x:Bind HaveNewFile}"></StateTrigger>
+                                <StateTrigger IsActive="{Binding NewFile, Converter={StaticResource IntToBool}}"></StateTrigger>
                             </VisualState.StateTriggers>
                             <VisualState.Setters>
                                 <Setter Target="fileBack.Visibility" Value="Visible" />
@@ -38,7 +39,7 @@
                     <VisualStateGroup x:Name="workState">
                         <VisualState>
                             <VisualState.StateTriggers>
-                                <StateTrigger IsActive="{x:Bind HaveNewWork}"></StateTrigger>
+                                <StateTrigger IsActive="{Binding NewWork, Converter={StaticResource IntToBool}}"></StateTrigger>
                             </VisualState.StateTriggers>
                             <VisualState.Setters>
                                 <Setter Target="workBack.Visibility" Value="Visible" />
@@ -46,7 +47,7 @@
                             </VisualState.Setters>
                         </VisualState>
                     </VisualStateGroup>
-                </VisualStateManager.VisualStateGroups>-->
+                </VisualStateManager.VisualStateGroups>
                 
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="48"/>
@@ -76,20 +77,13 @@
                     </Grid>
                 </Button>
             </Grid>
-        </DataTemplate>
+        </DataTemplate>-->
 
         <Style x:Key="NavMenuItemContainerStyle" TargetType="ListViewItem">
             <Setter Property="HorizontalAlignment" Value="Stretch" />
             <Setter Property="Padding" Value="0" />
             <Setter Property="MinHeight" Value="36" />
         </Style>
-
-        <!--<DataTemplate x:Key="CourseNumBtnTemplate" x:DataType="sys:Int32">
-            <Grid>
-                <Ellipse Fill="Pink" Width="32" Height="32"></Ellipse>
-                <TextBlock Text="{x:Bind}"/>
-            </Grid>
-        </DataTemplate>-->
 
         <Style x:Key="courseNumberStyle" TargetType="Button">
             <Setter Property="Background" Value="Transparent" />
@@ -101,14 +95,29 @@
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <!--<Grid.RowDefinitions>
-            <RowDefinition Height="*"></RowDefinition>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"></ColumnDefinition>
-        </Grid.ColumnDefinitions>-->
 
-        <!--<Button x:Name="splitViewToggle" Style="{ThemeResource splitViewToggleButtonStyle}" Click="splitViewToggle_Click"/>-->
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="WidthStates">
+                <VisualState x:Name="WideState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="540"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="splitView.IsPaneOpen" Value="True"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="NarrowState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="320"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="splitView.DisplayMode" Value="Overlay"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <Button x:Name="splitViewToggle" VerticalAlignment="Top" Style="{ThemeResource splitViewToggleButtonStyle}" Click="splitViewToggle_Click"/>
         <SplitView x:Name="splitView" DisplayMode="CompactInline" IsPaneOpen="True" OpenPaneLength="280">
             <SplitView.Pane>
                 <Grid>
@@ -121,11 +130,12 @@
                     <Button x:Name="splitViewToggle2" Style="{ThemeResource splitViewToggleButtonStyle}" Click="splitViewToggle_Click"/>
                     <TextBlock Text="Learn@THU" VerticalAlignment="Center" HorizontalAlignment="Center"
                                FontSize="20" FontStyle="Italic" FontWeight="SemiBold"></TextBlock>
+                    <Button x:Name="updateBtn" HorizontalAlignment="Right" Style="{ThemeResource splitViewToggleButtonStyle}" Click="updateBtn_Click">
+                        <SymbolIcon Symbol="Refresh"/>
+                    </Button>
                     <ListView x:Name="NavListView" Grid.Row="1" SelectionMode="None" IsItemClickEnabled="True" Width="280"
                               ItemsSource="{x:Bind VM.Courses, Mode=OneWay}"
-                              ItemTemplate="{StaticResource NavMenuItemTemplate}"
-                              ItemContainerStyle="{StaticResource NavMenuItemContainerStyle}"
-                              ItemClick="NavListView_ItemClick">
+                              ItemClick="NavListView_ItemClick" HorizontalContentAlignment="Stretch">
                         <ListView.Header>
                             <Grid Width="280" Height="40">
                                 <Grid.ColumnDefinitions>
@@ -142,6 +152,18 @@
                                 <TextBlock Grid.Column="4" Text="作业" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Grid>
                         </ListView.Header>
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalAlignment" Value="Stretch" />
+                                <Setter Property="Padding" Value="0" />
+                                <Setter Property="MinHeight" Value="36" />
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <local:CourseItemControl Width="280"/>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
                     </ListView>
                     <ListView ItemClick="SettingBtn_Click" Grid.Row="2" SelectionMode="None" IsItemClickEnabled="True"
                               ItemContainerStyle="{StaticResource NavMenuItemContainerStyle}">
@@ -160,6 +182,7 @@
                     </ListView>
                 </Grid>
             </SplitView.Pane>
+            
             <Frame x:Name="MainFrame"/>
         </SplitView>
 

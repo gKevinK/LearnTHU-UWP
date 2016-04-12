@@ -85,7 +85,7 @@ namespace LearnTHU
                 // 参数
                 var vault = new Windows.Security.Credentials.PasswordVault();
                 //vault.Remove(new Windows.Security.Credentials.PasswordCredential("LearnTHU", "2013010155", string.Empty));
-                if (vault.RetrieveAll().Count == 0 || vault.FindAllByResource("LearnTHU")[0].Password == "")
+                if (vault.RetrieveAll().Count == 0)
                 {
                     rootFrame.Navigate(typeof(View.Login), e.Arguments);
                 }
@@ -125,6 +125,5 @@ namespace LearnTHU
             }
             deferral.Complete();
         }
-
     }
 }

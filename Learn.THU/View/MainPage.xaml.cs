@@ -46,6 +46,12 @@ namespace LearnTHU.View
             NavListView.Visibility = splitView.IsPaneOpen ? Visibility.Visible : Visibility.Collapsed;
         }
 
+        private async void updateBtn_Click(object sender, RoutedEventArgs e)
+        {
+            await VM.Model.RefreshCourseList(true);
+            await VM.GetCourseList();
+        }
+
         private void NavListView_ItemClick(object sender, ItemClickEventArgs e)
         {
             CourseVM item = e.ClickedItem as CourseVM;
@@ -69,5 +75,7 @@ namespace LearnTHU.View
             // TODO
             await new Windows.UI.Popups.MessageDialog(message).ShowAsync();
         }
+
+
     }
 }

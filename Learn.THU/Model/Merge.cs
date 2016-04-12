@@ -63,7 +63,7 @@ namespace LearnTHU.Model
                 }
                 // TODO
                 newFile.FileName = oldFile.FileName;
-                if (oldFile.Status == File.FileStatus.Ignored)
+                if (oldFile.Status == File.FileStatus.Ignored && newFile.Status == File.FileStatus.Undownload)
                     newFile.Status = File.FileStatus.Ignored;
             }
             oldList.Clear();

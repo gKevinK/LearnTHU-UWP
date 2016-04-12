@@ -37,10 +37,12 @@ namespace LearnTHU.View
             webView.NavigateWithHttpRequestMessage(e.Parameter as HttpRequestMessage);
         }
 
-        private void WebView_UnviewableContentIdentified(WebView sender, WebViewUnviewableContentIdentifiedEventArgs args)
+        private async void WebView_UnviewableContentIdentified(WebView sender, WebViewUnviewableContentIdentifiedEventArgs args)
         {
+            await Model.MainModel.Current.DownloadFile(args.Uri.OriginalString);
+            await new Windows.UI.Popups.MessageDialog("下载完成").ShowAsync();
         }
-
+        
         private void backBtn_Click(object sender, RoutedEventArgs e)
         {
             ((Frame)Window.Current.Content).GoBack();

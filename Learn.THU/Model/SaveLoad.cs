@@ -97,7 +97,8 @@ namespace LearnTHU.Model
             jsonObj["GroupName"] = JsonValue.CreateStringValue(f.GroupName);
 
             jsonObj["FileSize"] = JsonValue.CreateNumberValue(f.FileSize);
-            jsonObj["FileName"] = f.FileName == null ? JsonValue.CreateNullValue() : JsonValue.CreateStringValue(f.FileName);
+            jsonObj["FileName"] = f.FileName == null ?
+                JsonValue.CreateNullValue() : JsonValue.CreateStringValue(f.FileName);
             return jsonObj;
         }
 
@@ -126,7 +127,7 @@ namespace LearnTHU.Model
         {
             courses.Clear();
             var vault = new Windows.Security.Credentials.PasswordVault();
-            if (vault.RetrieveAll().Count == 0 || vault.FindAllByResource("LearnTHU")[0].Password == "") return;
+            if (vault.RetrieveAll().Count == 0) return;
             string userId = vault.FindAllByResource("LearnTHU")[0].UserName;
             StorageFolder storageFolder = ApplicationData.Current.LocalFolder;
             StorageFile file = await storageFolder.GetFileAsync(userId + ".json");
@@ -198,7 +199,8 @@ namespace LearnTHU.Model
                 Publisher = jsonObj.GetNamedString("Publisher"),
                 Date = DateTime.Parse(jsonObj.GetNamedString("Date")),
                 IsRead = jsonObj.GetNamedBoolean("IsRead"),
-                Content = jsonObj.GetNamedString("Content", null),
+                Content = jsonObj.GetNamedValue("Content").ValueType == JsonValueType.Null ?
+                    null : jsonObj.GetNamedString("Content"),
             };
             return n;
         }
@@ -228,11 +230,12 @@ namespace LearnTHU.Model
                 Title = jsonObj.GetNamedString("Title"),
                 BeginTime = DateTime.Parse(jsonObj.GetNamedString("BeginTime")),
                 EndTime = DateTime.Parse(jsonObj.GetNamedString("EndTime")),
-                Content = jsonObj.GetNamedString("Content", ""),
+                Content = jsonObj.GetNamedValue("Content").ValueType == JsonValueType.Null ?
+                    null : jsonObj.GetNamedString("Content"),
                 Status = (Work.WorkStatus)(int)jsonObj.GetNamedNumber("Status"),
                 Attachment = null,
             };
-            if (jsonObj.GetNamedObject("Attachment", null) != null)
+            if (jsonObj.GetNamedValue("Attachment").ValueType != JsonValueType.Null)
             {
                 WorkFile wf = new WorkFile()
                 {
