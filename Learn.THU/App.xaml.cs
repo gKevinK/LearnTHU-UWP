@@ -84,7 +84,6 @@ namespace LearnTHU
                 // 并通过将所需信息作为导航参数传入来配置
                 // 参数
                 var vault = new Windows.Security.Credentials.PasswordVault();
-                //vault.Remove(new Windows.Security.Credentials.PasswordCredential("LearnTHU", "2013010155", string.Empty));
                 if (vault.RetrieveAll().Count == 0)
                 {
                     rootFrame.Navigate(typeof(View.Login), e.Arguments);
@@ -118,7 +117,7 @@ namespace LearnTHU
         private async void OnSuspending(object sender, SuspendingEventArgs e)
         {
             var deferral = e.SuspendingOperation.GetDeferral();
-            //TODO: 保存应用程序状态并停止任何后台活动
+            // 保存应用程序状态并停止任何后台活动
             if (MainModel.Current != null)
             {
                 await MainModel.Current.Save();

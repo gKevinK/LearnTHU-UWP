@@ -61,7 +61,6 @@ namespace LearnTHU.Model
                 {
                     newNum += 1; break;
                 }
-                // TODO
                 newFile.FileName = oldFile.FileName;
                 if (oldFile.Status == File.FileStatus.Ignored && newFile.Status == File.FileStatus.Undownload)
                     newFile.Status = File.FileStatus.Ignored;
