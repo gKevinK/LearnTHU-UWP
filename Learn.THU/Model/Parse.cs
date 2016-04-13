@@ -175,8 +175,7 @@ namespace LearnTHU.Model
                                 Name = fileObj.GetNamedString("title"),
                                 Note = fileObj.GetNamedValue("detail").ValueType == JsonValueType.Null ?
                                     "" : fileObj.GetNamedString("detail"),
-                                Status = fileObj.GetNamedObject("resourcesMappingByFileId").GetNamedNumber("resourcesStatus") == 1 ?
-                                    File.FileStatus.Undownload : File.FileStatus.Downloaded,
+                                Status = File.FileStatus.Downloaded,
                                 GroupName = groupName,
                                 FileName = fileObj.GetNamedObject("resourcesMappingByFileId").GetNamedString("fileName"),
                                 FileSize = Double.Parse(fileObj.GetNamedObject("resourcesMappingByFileId").GetNamedString("fileSize")),

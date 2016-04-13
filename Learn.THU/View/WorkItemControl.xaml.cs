@@ -33,7 +33,7 @@ namespace LearnTHU.View
 
         private void RaiseMenu(object sender, RoutedEventArgs e)
         {
-            if ((DataContext as WorkVM).Status == Model.Work.WorkStatus.Ignored)
+            if ((DataContext as WorkVM).Status == Model.Work.WorkStatus.Unhand)
                 FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
         }
     }

@@ -130,7 +130,7 @@ namespace LearnTHU.Model
             if (vault.RetrieveAll().Count == 0) return;
             string userId = vault.FindAllByResource("LearnTHU")[0].UserName;
             StorageFolder storageFolder = ApplicationData.Current.LocalFolder;
-            StorageFile file = await storageFolder.GetFileAsync(userId + ".json");
+            StorageFile file = (StorageFile)await storageFolder.TryGetItemAsync(userId + ".json");
             if (file == null) return;
             string json = await FileIO.ReadTextAsync(file);
             JsonArray jsonArr = JsonArray.Parse(json);
