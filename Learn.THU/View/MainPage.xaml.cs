@@ -52,7 +52,7 @@ namespace LearnTHU.View
             await VM.GetCourseList();
         }
 
-        private void NavListView_ItemClick(object sender, ItemClickEventArgs e)
+        private async void NavListView_ItemClick(object sender, ItemClickEventArgs e)
         {
             CourseVM item = e.ClickedItem as CourseVM;
             if (MainFrame.SourcePageType != typeof(CoursePage) || CoursePage.Current == null)
@@ -61,7 +61,7 @@ namespace LearnTHU.View
             }
             else
             {
-                CoursePage.Current.NavTo(item.Id);
+                await CoursePage.Current.NavTo(item.Id);
             }
         }
 

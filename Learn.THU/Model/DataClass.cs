@@ -86,6 +86,7 @@ namespace LearnTHU.Model
         public DateTime EndTime { get; set; }
         public string Content { get; set; }
         public WorkFile Attachment { get; set; }
+        public string Mark { get; set; }
 
         public enum WorkStatus
         {

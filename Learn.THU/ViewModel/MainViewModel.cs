@@ -37,7 +37,8 @@ namespace LearnTHU.ViewModel
         {
             if (Model.Loaded == false)
                 await Model.Load();
-            var courses = await Model.GetCourseList();
+            var courses = Model.GetCourseList();
+            await Model.RefreshCourseList();
             Courses.Clear();
             foreach (var course in courses)
             {

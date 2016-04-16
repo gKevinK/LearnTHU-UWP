@@ -13,5 +13,7 @@
                 Background="White" Click="backBtn_Click">
             <SymbolIcon Symbol="Back"></SymbolIcon>
         </Button>
+        <TextBlock x:Name="testTip" Text="测试课程 暂无内容&#13;&#13;No content for course for testing." Visibility="Collapsed"
+                   HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
     </Grid>
 </Page>

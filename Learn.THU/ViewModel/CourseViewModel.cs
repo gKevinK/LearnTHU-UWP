@@ -54,14 +54,14 @@ namespace LearnTHU.ViewModel
             Current = this;
         }
 
-        public async Task ChangeCourse(string courseId)
+        public void ChangeCourse(string courseId)
         {
             if (courseId == CourseId)
             {
                 return;
             }
             CourseId = courseId;
-            Course = (await Model.GetCourseList()).Find(c => c.Id == courseId);
+            Course = (Model.GetCourseList()).Find(c => c.Id == courseId);
             CourseName = Course.Name;
             NoticeList.Clear();
             NoticeListLoaded = false;
@@ -102,6 +102,7 @@ namespace LearnTHU.ViewModel
             if (noticeVM.IsRead == false)
             {
                 noticeVM.IsRead = true;
+                UpdateNumbers();
             }
 
             if (await Model.RefNotice(CourseId, noticeVM.Id) == MainModel.UpdateResult.Success)
@@ -240,6 +241,7 @@ namespace LearnTHU.ViewModel
                 {
                     PropertyChanged(this, new PropertyChangedEventArgs("Status"));
                 }
+                CourseViewModel.Current.UpdateNumbers();
             }
         }
 
@@ -279,6 +281,7 @@ namespace LearnTHU.ViewModel
                     _work.Status = value;
                     if (PropertyChanged != null)
                         PropertyChanged(this, new PropertyChangedEventArgs("Status"));
+                    CourseViewModel.Current.UpdateNumbers();
                 }
             }
         }

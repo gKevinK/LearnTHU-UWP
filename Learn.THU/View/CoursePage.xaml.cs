@@ -47,7 +47,7 @@ namespace LearnTHU.View
         {
             if (courseId != VM.CourseId)
             {
-                await VM.ChangeCourse(courseId);
+                VM.ChangeCourse(courseId);
                 if (listKind == ListKind.Null || listKind == ListKind.Notice)
                 {
                     listPivot.SelectedIndex = 0;

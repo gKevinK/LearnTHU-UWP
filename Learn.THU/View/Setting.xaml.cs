@@ -46,7 +46,8 @@ namespace LearnTHU.View
             {
                 await MainModel.Current.Save();
                 var vault = new Windows.Security.Credentials.PasswordVault();
-                vault.Remove(vault.FindAllByResource("LearnTHU")[0]);
+                foreach (var record in vault.FindAllByResource("LearnTHU"))
+                    vault.Remove(record);
             }
             finally
             {

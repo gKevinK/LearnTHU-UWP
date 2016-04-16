@@ -43,6 +43,27 @@ namespace LearnTHU.Model
             return courseList;
         }
 
+        public static List<Course> FakeCourseList()
+        {
+            List<Course> list = new List<Course>();
+            list.Add(new Course() { Id = "00000000", Name = "Test Course 1", NoticeList = FakeNoticeList(),
+                NewNoticeCountOriginal = 1, NewFileCountOriginal = 0, UnhandWorkCountOriginal = 0 });
+            list.Add(new Course() { Id = "00000001", Name = "Test Course 2", NoticeList = FakeNoticeList(),
+                NewNoticeCountOriginal = 1, NewFileCountOriginal = 0, UnhandWorkCountOriginal = 0 });
+            list.Add(new Course() { Id = "00000002", Name = "Test Course 3", NoticeList = FakeNoticeList(),
+                NewNoticeCountOriginal = 1, NewFileCountOriginal = 0, UnhandWorkCountOriginal = 0 });
+            return list;
+        }
+
+        public static List<Notice> FakeNoticeList()
+        {
+            return new List<Notice>()
+            {
+                new Notice() { Title = "Test Notice", Date = DateTime.Now,
+                    Id = "", Content = "Content", Publisher = "Publisher", IsRead = false }
+            };
+        }
+
         public static List<Notice> NoticeListOld(string html)
         {
             List<Notice> noticeList = new List<Notice>();

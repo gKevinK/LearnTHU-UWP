@@ -210,3 +210,10 @@ FakesAssemblies/
 GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
+/Learn.THU/_pkginfo.txt
+/Learn.THU/BundleArtifacts/x86.txt
+/Learn.THU/BundleArtifacts/x64.txt
+/Learn.THU/BundleArtifacts/Upload/x86.txt
+/Learn.THU/BundleArtifacts/Upload/x64.txt
+/Learn.THU/BundleArtifacts/Upload/arm.txt
+/Learn.THU/BundleArtifacts/arm.txt

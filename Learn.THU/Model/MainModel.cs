@@ -60,9 +60,8 @@ namespace LearnTHU.Model
             }
         }
 
-        public async Task<List<Course>> GetCourseList()
+        public List<Course> GetCourseList()
         {
-            await RefreshCourseList();
             return CourseList;
         }
 

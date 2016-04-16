@@ -131,6 +131,7 @@ namespace LearnTHU.Model
         public async Task<List<Course>> GetCourseListOld()
         {
             string html = await Request("http://learn.tsinghua.edu.cn/MultiLanguage/lesson/student/MyCourse.jsp?language=cn");
+            if (html == "") return Parse.FakeCourseList();
             return Parse.CourseListOld(html);
         }
 
@@ -138,6 +139,7 @@ namespace LearnTHU.Model
         {
             string url = string.Format(@"http://learn.tsinghua.edu.cn/MultiLanguage/public/bbs/getnoteid_student.jsp?course_id={0}", courseId);
             string html = await Request(url);
+            if (html == "") return Parse.FakeNoticeList();
             return Parse.NoticeListOld(html);
         }
 

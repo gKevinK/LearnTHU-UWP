@@ -33,8 +33,16 @@ namespace LearnTHU.View
             base.OnNavigatedTo(e);
 
             webView.UnviewableContentIdentified += WebView_UnviewableContentIdentified;
-            
-            webView.NavigateWithHttpRequestMessage(e.Parameter as HttpRequestMessage);
+
+            HttpRequestMessage hrm = e.Parameter as HttpRequestMessage;
+            if (hrm.RequestUri.OriginalString.Contains("0000000"))
+            {
+                testTip.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                webView.NavigateWithHttpRequestMessage(hrm);
+            }
         }
 
         private async void WebView_UnviewableContentIdentified(WebView sender, WebViewUnviewableContentIdentifiedEventArgs args)
