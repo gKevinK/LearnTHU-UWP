@@ -14,6 +14,7 @@ namespace LearnTHU.Model
         public DateTime UpdateNoticeTime;
         public DateTime UpdateFileTime;
         public DateTime UpdateWorkTime;
+        public string Path;
 
         public bool IsNewWebLearning { get { return Id.Length > 10; } }
 
@@ -82,11 +83,14 @@ namespace LearnTHU.Model
     {
         public string Id { get; set; }
         public string Title { get; set; }
-        public DateTime BeginTime { get; set; }
-        public DateTime EndTime { get; set; }
+        public DateTime BeginDate { get; set; }
+        public DateTime EndDate { get; set; }
         public string Content { get; set; }
         public WorkFile Attachment { get; set; }
         public string Mark { get; set; }
+        public string Marker { get; set; }
+        public string MarkedDate { get; set; }
+        public string MarkContent { get; set; }
 
         public enum WorkStatus
         {

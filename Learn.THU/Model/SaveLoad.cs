@@ -47,6 +47,7 @@ namespace LearnTHU.Model
             jsonObj["UpdateNoticeTime"] = JsonValue.CreateStringValue(c.UpdateNoticeTime.ToString());
             jsonObj["UpdateFileTime"] = JsonValue.CreateStringValue(c.UpdateFileTime.ToString());
             jsonObj["UpdateWorkTime"] = JsonValue.CreateStringValue(c.UpdateWorkTime.ToString());
+            jsonObj["Path"] = c.Path == null ? JsonValue.CreateNullValue() : JsonValue.CreateStringValue(c.Path);
             jsonObj["nnc"] = JsonValue.CreateNumberValue(c.NewNoticeCountOriginal);
             jsonObj["nfc"] = JsonValue.CreateNumberValue(c.NewFileCountOriginal);
             jsonObj["uwc"] = JsonValue.CreateNumberValue(c.UnhandWorkCountOriginal);
@@ -107,8 +108,8 @@ namespace LearnTHU.Model
             JsonObject jsonObj = new JsonObject();
             jsonObj["Id"] = JsonValue.CreateStringValue(w.Id);
             jsonObj["Title"] = JsonValue.CreateStringValue(w.Title);
-            jsonObj["BeginTime"] = JsonValue.CreateStringValue(w.BeginTime.ToString());
-            jsonObj["EndTime"] = JsonValue.CreateStringValue(w.EndTime.ToString());
+            jsonObj["BeginTime"] = JsonValue.CreateStringValue(w.BeginDate.ToString());
+            jsonObj["EndTime"] = JsonValue.CreateStringValue(w.EndDate.ToString());
             jsonObj["Content"] = w.Content == null ? JsonValue.CreateNullValue() : JsonValue.CreateStringValue(w.Content);
             jsonObj["Attachment"] = w.Attachment == null ? JsonValue.CreateNullValue() : workFileToJson(w.Attachment);
             jsonObj["Status"] = JsonValue.CreateNumberValue((int)w.Status);
@@ -154,6 +155,8 @@ namespace LearnTHU.Model
             c.UpdateNoticeTime = DateTime.Parse(jsonObj.GetNamedString("UpdateNoticeTime"));
             c.UpdateFileTime = DateTime.Parse(jsonObj.GetNamedString("UpdateFileTime"));
             c.UpdateWorkTime = DateTime.Parse(jsonObj.GetNamedString("UpdateWorkTime"));
+            c.Path = jsonObj.GetNamedValue("Path", JsonValue.CreateNullValue()).ValueType == JsonValueType.Null ?
+                null : jsonObj.GetNamedString("Path");
             c.NewNoticeCountOriginal = (int)jsonObj.GetNamedNumber("nnc");
             c.NewFileCountOriginal = (int)jsonObj.GetNamedNumber("nfc");
             c.UnhandWorkCountOriginal = (int)jsonObj.GetNamedNumber("uwc");
@@ -228,8 +231,8 @@ namespace LearnTHU.Model
             {
                 Id = jsonObj.GetNamedString("Id"),
                 Title = jsonObj.GetNamedString("Title"),
-                BeginTime = DateTime.Parse(jsonObj.GetNamedString("BeginTime")),
-                EndTime = DateTime.Parse(jsonObj.GetNamedString("EndTime")),
+                BeginDate = DateTime.Parse(jsonObj.GetNamedString("BeginTime")),
+                EndDate = DateTime.Parse(jsonObj.GetNamedString("EndTime")),
                 Content = jsonObj.GetNamedValue("Content").ValueType == JsonValueType.Null ?
                     null : jsonObj.GetNamedString("Content"),
                 Status = (Work.WorkStatus)(int)jsonObj.GetNamedNumber("Status"),

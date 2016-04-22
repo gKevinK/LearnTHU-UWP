@@ -238,8 +238,8 @@ namespace LearnTHU.Model
                 {
                     Id = match.Groups[1].Value,
                     Title = WebUtility.HtmlDecode(match.Groups[2].Value),
-                    BeginTime = DateTime.Parse(match.Groups[3].Value),
-                    EndTime = DateTime.Parse(match.Groups[4].Value).AddHours(23).AddMinutes(59),
+                    BeginDate = DateTime.Parse(match.Groups[3].Value),
+                    EndDate = DateTime.Parse(match.Groups[4].Value).AddHours(23).AddMinutes(59),
                     Status = match.Groups[5].Value.Trim() == "已经提交" ? Work.WorkStatus.Submitted : Work.WorkStatus.Unhand,
                 };
                 if (match.Groups[6].Value.Length < 5)
@@ -272,8 +272,8 @@ namespace LearnTHU.Model
                         Id = record.GetNamedString("homewkId"),
                         Title = info.GetNamedString("title"),
                         Content = info.GetNamedString("detail"),
-                        BeginTime = new DateTime(1970, 1, 1).AddMilliseconds(info.GetNamedNumber("beginDate")),
-                        EndTime = new DateTime(1970, 1, 1).AddMilliseconds(info.GetNamedNumber("endDate")),
+                        BeginDate = new DateTime(1970, 1, 1).AddMilliseconds(info.GetNamedNumber("beginDate")),
+                        EndDate = new DateTime(1970, 1, 1).AddMilliseconds(info.GetNamedNumber("endDate")),
                     };
                     switch (record.GetNamedString("status"))
                     {

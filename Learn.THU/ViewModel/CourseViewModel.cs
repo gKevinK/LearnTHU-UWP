@@ -267,8 +267,8 @@ namespace LearnTHU.ViewModel
 
         public Work Work { get { return _work; } }
         public string Title { get { return _work.Title; } }
-        public string BeginDate { get { return $"{_work.BeginTime.Year}-{_work.BeginTime.Month}-{_work.EndTime.Day}"; } }
-        public string EndDate { get { return $"{_work.EndTime.Year}-{_work.EndTime.Month}-{_work.EndTime.Day}"; } }
+        public string BeginDate { get { return $"{_work.BeginDate.Year}-{_work.BeginDate.Month}-{_work.EndDate.Day}"; } }
+        public string EndDate { get { return $"{_work.EndDate.Year}-{_work.EndDate.Month}-{_work.EndDate.Day}"; } }
         public bool HaveAttachment { get { return _work.Attachment != null; } }
         public string Content { get { return _work.Content; } }
         public Work.WorkStatus Status
