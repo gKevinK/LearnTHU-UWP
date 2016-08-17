@@ -180,10 +180,7 @@ namespace LearnTHU.ViewModel
 
         public void RaisePropertyChanged(string propertyName)
         {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 
@@ -206,10 +203,7 @@ namespace LearnTHU.ViewModel
             set
             {
                 _notice.IsRead = value;
-                if (PropertyChanged != null)
-                {
-                    PropertyChanged(this, new PropertyChangedEventArgs("IsRead"));
-                }
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsRead"));
             }
         }
 
