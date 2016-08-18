@@ -83,12 +83,16 @@ namespace LearnTHU.ViewModel
                 NoticeList.Add(new NoticeVM(notice));
             }
 
+            string id = CourseId;
             if (await Model.RefNoticeList(CourseId) == MainModel.UpdateResult.Success)
             {
-                NoticeList.Clear();
-                foreach (Notice notice in list)
+                if (id == CourseId)
                 {
-                    NoticeList.Add(new NoticeVM(notice));
+                    NoticeList.Clear();
+                    foreach (Notice notice in list)
+                    {
+                        NoticeList.Add(new NoticeVM(notice));
+                    }
                 }
             }
             NoticeListLoaded = true;
@@ -121,12 +125,16 @@ namespace LearnTHU.ViewModel
                 FileList.Add(new FileVM(file));
             }
 
+            string id = CourseId;
             if (await Model.RefFileList(CourseId) == MainModel.UpdateResult.Success)
             {
-                FileList.Clear();
-                foreach (File file in list)
+                if (id == CourseId)
                 {
-                    FileList.Add(new FileVM(file));
+                    FileList.Clear();
+                    foreach (File file in list)
+                    {
+                        FileList.Add(new FileVM(file));
+                    }
                 }
             }
             FileListLoaded = true;
@@ -143,12 +151,16 @@ namespace LearnTHU.ViewModel
                 WorkList.Add(new WorkVM(work));
             }
 
+            string id = CourseId;
             if (await Model.RefWorkList(CourseId) == MainModel.UpdateResult.Success)
             {
-                WorkList.Clear();
-                foreach (Work work in list)
+                if (id == CourseId)
                 {
-                    WorkList.Add(new WorkVM(work));
+                    WorkList.Clear();
+                    foreach (Work work in list)
+                    {
+                        WorkList.Add(new WorkVM(work));
+                    }
                 }
             }
             WorkListLoaded = true;
