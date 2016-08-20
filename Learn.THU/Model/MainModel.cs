@@ -198,7 +198,7 @@ namespace LearnTHU.Model
             return UpdateResult.Success;
         }
 
-        public HttpRequestMessage GetHRM(string courseId)
+        public HttpRequestMessage GetCoursePageHRM(string courseId)
         {
             Course course = CourseList.Find(c => c.Id == courseId);
             HttpRequestMessage hrm;

@@ -120,7 +120,7 @@ namespace LearnTHU.View
 
         private void WebViewBtn_Click(object sender, RoutedEventArgs e)
         {
-            ((Frame)Window.Current.Content).Navigate(typeof(WebsitePage), VM.GetHRM());
+            ((Frame)Window.Current.Content).Navigate(typeof(WebsitePage), VM.GetCoursePageHRM());
         }
 
         private void HideDetailColumn()

@@ -125,7 +125,7 @@ namespace LearnTHU.Model
 
         public async Task Logout()
         {
-
+            // TODO
         }
 
         public async Task<List<Course>> GetCourseListOld()

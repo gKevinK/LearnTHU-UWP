@@ -177,9 +177,9 @@ namespace LearnTHU.ViewModel
             RaisePropertyChanged("WorkDetail");
         }
 
-        public HttpRequestMessage GetHRM()
+        public HttpRequestMessage GetCoursePageHRM()
         {
-            return Model.GetHRM(CourseId);
+            return Model.GetCoursePageHRM(CourseId);
         }
 
         public void UpdateNumbers()
