@@ -310,6 +310,7 @@ namespace LearnTHU.Model
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
             req.CookieContainer = cc;
             HttpWebResponse res = (HttpWebResponse)await req.GetResponseAsync();
+            // TODO
             return "*.*";
         }
     }

@@ -1,17 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 using LearnTHU.ViewModel;
 
@@ -29,15 +18,17 @@ namespace LearnTHU.View
 
         public MainPage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
 
-            this.Loaded += SetCourseList;
+            Loaded += SetCourseList;
             Current = this;
         }
 
         private async void SetCourseList(object sender, RoutedEventArgs e)
         {
+            progressRing.IsActive = true;
             await VM.GetCourseList();
+            progressRing.IsActive = false;
         }
 
         private void splitViewToggle_Click(object sender, RoutedEventArgs e)
@@ -48,8 +39,10 @@ namespace LearnTHU.View
 
         private async void updateBtn_Click(object sender, RoutedEventArgs e)
         {
+            progressRing.IsActive = true;
             await VM.Model.RefreshCourseList(true);
             await VM.GetCourseList();
+            progressRing.IsActive = false;
         }
 
         private async void NavListView_ItemClick(object sender, ItemClickEventArgs e)
