@@ -12,7 +12,7 @@ Windows Store 链接：[点击进入](https://www.microsoft.com/zh-cn/store/p/le
 
 ## 截图
 
-Coming soon...
+![登录页面](https://github.com/gKevinK/LearnTHU-UWP/blob/master/Screenshots/p1.png)
 
 ## 开发中的功能
 
