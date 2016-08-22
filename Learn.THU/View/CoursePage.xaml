@@ -126,9 +126,10 @@
             <ColumnDefinition x:Name="detailColumn" Width="*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
+        <Rectangle Fill="{ThemeResource PivotNavButtonPointerOverBorderThemeBrush}"/>
         <TextBlock x:Name="TitleName" Text="{x:Bind VM.CourseName, Mode=OneWay}"
                    FontSize="20" VerticalAlignment="Center" Padding="16,0" FontWeight="Medium"/>
-        <Button HorizontalAlignment="Right" Width="48" Height="48" ToolTipService.ToolTip="打开课程页面&#13;&#13;注意：暂时无法上传下载文件"
+        <Button HorizontalAlignment="Right" Width="48" Height="48" ToolTipService.ToolTip="打开课程页面&#13;&#13;注意：暂时无法上传文件"
                 Background="Transparent" Click="WebViewBtn_Click">
             <SymbolIcon Symbol="Page2"/>
         </Button>
