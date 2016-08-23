@@ -8,6 +8,7 @@ Windows Store 链接：[点击进入](https://www.microsoft.com/zh-cn/store/p/le
 
 * 查看课程公告、文件和作业
 * 下载课程文件
+* 选择忽略文件和作业，拯救强迫症（点击“新”、“未读”）
 * 查看网络学堂页面
 
 ## 截图
