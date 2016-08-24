@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Data.Xml.Dom;
 using Windows.UI.Notifications;
 
 namespace LearnTHU.Model
@@ -12,6 +13,19 @@ namespace LearnTHU.Model
         public static void Notify(string courseName, NotifyEventArgs args)
         {
             // TODO
+            string content = ""; // TODO
+            string toastXml = $@"<toast scenario='reminder'>
+    <visual>
+        <binding template='ToastGeneric'>
+            <text>网络学堂 - 新消息</text>
+            <text>{courseName} 更新了 {content}.</text>
+        </binding>
+    </visual>
+</toast>";
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(toastXml);
+            ToastNotification toast = new ToastNotification(doc);
+            ToastNotificationManager.CreateToastNotifier().Show(toast);
         }
     }
 
