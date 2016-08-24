@@ -12,13 +12,20 @@ namespace LearnTHU.Model
     {
         public static void Notify(string courseName, NotifyEventArgs args)
         {
-            // TODO
-            string content = ""; // TODO
+            if (args.NoticeNum + args.FileNum + args.WorkNum == 0) return;
+            List<string> contents = new List<string>();
+            if (args.NoticeNum > 0)
+                contents.Add($"{args.NoticeNum} 个新公告");
+            if (args.FileNum > 0)
+                contents.Add($"{args.FileNum} 个新文件");
+            if (args.WorkNum > 0)
+                contents.Add($"{args.WorkNum} 个新作业");
+            string content = string.Join("，", contents);
             string toastXml = $@"<toast scenario='reminder'>
     <visual>
         <binding template='ToastGeneric'>
             <text>网络学堂 - 新消息</text>
-            <text>{courseName} 更新了 {content}.</text>
+            <text>{courseName} 发布了 {content}.</text>
         </binding>
     </visual>
 </toast>";
