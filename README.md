@@ -2,7 +2,11 @@
 
 一个清华网络学堂的客户端
 
+Windows 10 可用，手机端界面尚未适配，因此没有发布。
+
 Windows Store 链接：[点击进入](https://www.microsoft.com/zh-cn/store/p/learn-thu/9nblggh4njx5)
+
+项目主页：[点击进入](http://gkevink.github.io/LearnTHU-UWP/)
 
 ## 已实现功能
 
@@ -19,3 +23,9 @@ Windows Store 链接：[点击进入](https://www.microsoft.com/zh-cn/store/p/le
 
 * 新消息提醒
 * 下载作业附件
+
+## 关于项目
+
+按照 MIT 协议开源，欢迎一起来改进~
+
+有问题可以[提交issue](https://github.com/gKevinK/LearnTHU-UWP/issues/new)
