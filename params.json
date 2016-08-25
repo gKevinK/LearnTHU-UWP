@@ -1,0 +1,6 @@
+{
+  "name": "LearnTHU",
+  "tagline": "清华网络学堂的一个开源客户端",
+  "body": "# LearnTHU-UWP\r\n\r\n一个清华网络学堂的客户端\r\n\r\nWindows 10 可用，手机端界面尚未适配，因此没有发布。\r\n\r\nWindows Store 链接：[点击进入](https://www.microsoft.com/zh-cn/store/p/learn-thu/9nblggh4njx5)\r\n\r\n## 已实现功能\r\n\r\n* 查看课程公告、文件和作业\r\n* 下载课程文件\r\n* 选择忽略文件和作业，拯救强迫症（点击“新”、“未读”）\r\n* 查看网络学堂页面\r\n\r\n## 截图\r\n\r\n![登录页面](https://github.com/gKevinK/LearnTHU-UWP/blob/master/Screenshots/p1.png)\r\n\r\n## 开发中的功能\r\n\r\n* 新消息提醒\r\n* 下载作业附件\r\n\r\n## 关于项目\r\n\r\n按照 MIT 协议开源，欢迎一起来改进~\r\n有问题[点击这里](https://github.com/gKevinK/LearnTHU-UWP/issues/new)",
+  "note": "Don't delete this file! It's used internally to help with page regeneration."
+}
