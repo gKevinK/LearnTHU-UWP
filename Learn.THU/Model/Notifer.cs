@@ -10,7 +10,7 @@ namespace LearnTHU.Model
 {
     static class Notifer
     {
-        public static void Notify(string courseName, NotifyEventArgs args)
+        public static void Notify(NotifyEventArgs args)
         {
             if (args.NoticeNum + args.FileNum + args.WorkNum == 0) return;
             List<string> contents = new List<string>();
@@ -25,7 +25,7 @@ namespace LearnTHU.Model
     <visual>
         <binding template='ToastGeneric'>
             <text>网络学堂 - 新消息</text>
-            <text>{courseName} 发布了 {content}.</text>
+            <text>{args.CourseName} 发布了 {content}.</text>
         </binding>
     </visual>
 </toast>";
