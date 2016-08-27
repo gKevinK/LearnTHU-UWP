@@ -27,7 +27,7 @@ namespace LearnTHU.View
         {
             InitializeComponent();
 
-            this.Loaded += OnLoad;
+            Loaded += OnLoad;
         }
 
         private void OnLoad(object sender, RoutedEventArgs e)
