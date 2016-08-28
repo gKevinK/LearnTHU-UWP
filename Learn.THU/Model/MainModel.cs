@@ -32,6 +32,18 @@ namespace LearnTHU.Model
             Current = this;
         }
 
+        public static MainModel GetInstance()
+        {
+            lock(Current)
+            {
+                if (Current == null)
+                {
+                    Current = new MainModel();
+                }
+            }
+            return Current;
+        }
+
         public async Task Save()
         {
             await SaveLoad.SaveData(CourseList);

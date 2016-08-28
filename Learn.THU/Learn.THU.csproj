@@ -104,7 +104,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Model\BgUpdater.cs" />
+    <Compile Include="Model\UpdateBgTask.cs" />
     <Compile Include="Model\DataClass.cs" />
     <Compile Include="Model\Merge.cs" />
     <Compile Include="Model\MainModel.cs" />
