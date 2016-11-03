@@ -2,7 +2,9 @@
 
 一个清华网络学堂的客户端
 
-Windows Store 链接：[点击进入](https://www.microsoft.com/zh-cn/store/p/learn-thu/9nblggh4njx5)
+新版正在开发中，旧版已被下架，暂不可用
+
+~~Windows Store 链接：[点击进入](https://www.microsoft.com/zh-cn/store/p/learn-thu/9nblggh4njx5)~~
 
 ## 已实现功能
 
