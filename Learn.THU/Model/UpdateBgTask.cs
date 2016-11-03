@@ -13,7 +13,11 @@ namespace LearnTHU.Model
         public async void Run(IBackgroundTaskInstance taskInstance)
         {
             _deferral = taskInstance.GetDeferral();
+            NotifyEventArgs args = new NotifyEventArgs("Undefined", 0, 0, 0);
+
             // TODO
+
+            Notifer.Notify(args);
             _deferral.Complete();
         }
     }

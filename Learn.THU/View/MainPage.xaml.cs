@@ -19,6 +19,7 @@ namespace LearnTHU.View
         public MainPage()
         {
             InitializeComponent();
+            NavigationCacheMode = Windows.UI.Xaml.Navigation.NavigationCacheMode.Enabled;
 
             Loaded += SetCourseList;
             Current = this;
