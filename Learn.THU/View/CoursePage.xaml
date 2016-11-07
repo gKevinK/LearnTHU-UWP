@@ -126,7 +126,7 @@
             <ColumnDefinition x:Name="detailColumn" Width="*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
-        <Rectangle Fill="{ThemeResource PivotNavButtonPointerOverBorderThemeBrush}"/>
+        <Rectangle Fill="{ThemeResource AppBarBackgroundThemeBrush}"/>
         <TextBlock x:Name="TitleName" Text="{x:Bind VM.CourseName, Mode=OneWay}"
                    FontSize="20" VerticalAlignment="Center" Padding="16,0" FontWeight="Medium"/>
         <Button HorizontalAlignment="Right" Width="48" Height="48" ToolTipService.ToolTip="打开课程页面&#13;&#13;注意：暂时无法上传文件"
@@ -305,7 +305,7 @@
                 <Button Click="BackBtn_Click" Background="Transparent" Width="48" Height="48">
                     <SymbolIcon Symbol="Forward"></SymbolIcon>
                 </Button>
-                <TextBlock Grid.Column="1" Grid.ColumnSpan="2" FontSize="18" FontWeight="SemiBold" Padding="16,0"
+                <TextBlock Grid.Column="1" Grid.ColumnSpan="2" FontSize="20" FontWeight="Normal" Padding="16,0"
                            Text="{x:Bind VM.WorkDetail.Title, Mode=OneWay}" VerticalAlignment="Center" TextWrapping="Wrap"/>
                 <Button Grid.Column="3" Background="Transparent" Width="48" Height="48" ToolTipService.ToolTip="有附件"
                         Visibility="{x:Bind VM.WorkDetail.HaveAttachment, Converter={StaticResource BoolToVisibility}}">
