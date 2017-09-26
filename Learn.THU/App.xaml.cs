@@ -14,7 +14,6 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using LearnTHU.Model;
 
 namespace LearnTHU
 {
@@ -29,18 +28,8 @@ namespace LearnTHU
         /// </summary>
         public App()
         {
-            Microsoft.ApplicationInsights.WindowsAppInitializer.InitializeAsync(
-                Microsoft.ApplicationInsights.WindowsCollectors.Metadata |
-                Microsoft.ApplicationInsights.WindowsCollectors.Session);
             this.InitializeComponent();
             this.Suspending += OnSuspending;
-            this.UnhandledException += OnUnhandledException;
-        }
-
-        private async void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
-        {
-            e.Handled = true;
-            await new Windows.UI.Popups.MessageDialog(e.Message, @"程序遇到了问题…").ShowAsync();
         }
 
         /// <summary>
@@ -50,27 +39,17 @@ namespace LearnTHU
         /// <param name="e">有关启动请求和过程的详细信息。</param>
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
-
-#if DEBUG
-            if (System.Diagnostics.Debugger.IsAttached)
-            {
-                this.DebugSettings.EnableFrameRateCounter = true;
-            }
-#endif
-
             Frame rootFrame = Window.Current.Content as Frame;
 
             // 不要在窗口已包含内容时重复应用程序初始化，
             // 只需确保窗口处于活动状态
-            if (rootFrame == null)
-            {
+            if (rootFrame == null) {
                 // 创建要充当导航上下文的框架，并导航到第一页
                 rootFrame = new Frame();
 
                 rootFrame.NavigationFailed += OnNavigationFailed;
 
-                if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
-                {
+                if (e.PreviousExecutionState == ApplicationExecutionState.Terminated) {
                     //TODO: 从之前挂起的应用程序加载状态
                 }
 
@@ -78,23 +57,16 @@ namespace LearnTHU
                 Window.Current.Content = rootFrame;
             }
 
-            if (rootFrame.Content == null)
-            {
-                // 当导航堆栈尚未还原时，导航到第一页，
-                // 并通过将所需信息作为导航参数传入来配置
-                // 参数
-                var vault = new Windows.Security.Credentials.PasswordVault();
-                if (vault.RetrieveAll().Count == 0)
-                {
-                    rootFrame.Navigate(typeof(View.Login), e.Arguments);
+            if (e.PrelaunchActivated == false) {
+                if (rootFrame.Content == null) {
+                    // 当导航堆栈尚未还原时，导航到第一页，
+                    // 并通过将所需信息作为导航参数传入来配置
+                    // 参数
+                    //rootFrame.Navigate(typeof(MainPage), e.Arguments);
                 }
-                else
-                {
-                    rootFrame.Navigate(typeof(View.MainPage), e.Arguments);
-                }
+                // 确保当前窗口处于活动状态
+                Window.Current.Activate();
             }
-            // 确保当前窗口处于活动状态
-            Window.Current.Activate();
         }
 
         /// <summary>
@@ -114,14 +86,10 @@ namespace LearnTHU
         /// </summary>
         /// <param name="sender">挂起的请求的源。</param>
         /// <param name="e">有关挂起请求的详细信息。</param>
-        private async void OnSuspending(object sender, SuspendingEventArgs e)
+        private void OnSuspending(object sender, SuspendingEventArgs e)
         {
             var deferral = e.SuspendingOperation.GetDeferral();
-            // 保存应用程序状态并停止任何后台活动
-            if (MainModel.Current != null)
-            {
-                await MainModel.Current.Save();
-            }
+            //TODO: 保存应用程序状态并停止任何后台活动
             deferral.Complete();
         }
     }

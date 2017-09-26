@@ -1,11 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Learn.THU", "Learn.THU\Learn.THU.csproj", "{91EE3F10-895C-4D8E-9F57-1879A5F799EC}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestProject", "..\UnitTestProject\UnitTestProject.csproj", "{944B6134-1C75-4913-AF73-EB1AC007212E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,26 +33,11 @@ Global
 		{91EE3F10-895C-4D8E-9F57-1879A5F799EC}.Release|x86.ActiveCfg = Release|x86
 		{91EE3F10-895C-4D8E-9F57-1879A5F799EC}.Release|x86.Build.0 = Release|x86
 		{91EE3F10-895C-4D8E-9F57-1879A5F799EC}.Release|x86.Deploy.0 = Release|x86
-		{944B6134-1C75-4913-AF73-EB1AC007212E}.Debug|ARM.ActiveCfg = Debug|ARM
-		{944B6134-1C75-4913-AF73-EB1AC007212E}.Debug|ARM.Build.0 = Debug|ARM
-		{944B6134-1C75-4913-AF73-EB1AC007212E}.Debug|ARM.Deploy.0 = Debug|ARM
-		{944B6134-1C75-4913-AF73-EB1AC007212E}.Debug|x64.ActiveCfg = Debug|x64
-		{944B6134-1C75-4913-AF73-EB1AC007212E}.Debug|x64.Build.0 = Debug|x64
-		{944B6134-1C75-4913-AF73-EB1AC007212E}.Debug|x64.Deploy.0 = Debug|x64
-		{944B6134-1C75-4913-AF73-EB1AC007212E}.Debug|x86.ActiveCfg = Debug|x86
-		{944B6134-1C75-4913-AF73-EB1AC007212E}.Debug|x86.Build.0 = Debug|x86
-		{944B6134-1C75-4913-AF73-EB1AC007212E}.Debug|x86.Deploy.0 = Debug|x86
-		{944B6134-1C75-4913-AF73-EB1AC007212E}.Release|ARM.ActiveCfg = Release|ARM
-		{944B6134-1C75-4913-AF73-EB1AC007212E}.Release|ARM.Build.0 = Release|ARM
-		{944B6134-1C75-4913-AF73-EB1AC007212E}.Release|ARM.Deploy.0 = Release|ARM
-		{944B6134-1C75-4913-AF73-EB1AC007212E}.Release|x64.ActiveCfg = Release|x64
-		{944B6134-1C75-4913-AF73-EB1AC007212E}.Release|x64.Build.0 = Release|x64
-		{944B6134-1C75-4913-AF73-EB1AC007212E}.Release|x64.Deploy.0 = Release|x64
-		{944B6134-1C75-4913-AF73-EB1AC007212E}.Release|x86.ActiveCfg = Release|x86
-		{944B6134-1C75-4913-AF73-EB1AC007212E}.Release|x86.Build.0 = Release|x86
-		{944B6134-1C75-4913-AF73-EB1AC007212E}.Release|x86.Deploy.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {69C772D0-19DA-425E-8AB6-D13BBCC46A85}
 	EndGlobalSection
 EndGlobal
