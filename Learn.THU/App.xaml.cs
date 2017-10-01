@@ -30,6 +30,14 @@ namespace LearnTHU
         {
             this.InitializeComponent();
             this.Suspending += OnSuspending;
+            this.UnhandledException += OnUnhandledException;
+        }
+
+        private void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            e.Handled = true;
+            new Windows.UI.Popups.MessageDialog(e.Message, @"程序遇到了问题…").ShowAsync().AsTask().Start();
+            // throw new NotImplementedException();
         }
 
         /// <summary>
@@ -62,7 +70,7 @@ namespace LearnTHU
                     // 当导航堆栈尚未还原时，导航到第一页，
                     // 并通过将所需信息作为导航参数传入来配置
                     // 参数
-                    //rootFrame.Navigate(typeof(MainPage), e.Arguments);
+                    rootFrame.Navigate(typeof(View.LoginPage), e.Arguments);
                 }
                 // 确保当前窗口处于活动状态
                 Window.Current.Activate();
