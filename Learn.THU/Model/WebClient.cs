@@ -64,6 +64,15 @@ namespace LearnTHU.Model
             await client.GetStringAsync(new Uri(url));
         }
 
+        public async Task Logout()
+        {
+            var manager = new Windows.Web.Http.Filters.HttpBaseProtocolFilter().CookieManager;
+            foreach (var cookie in manager.GetCookies(new Uri(@"http://learn.tsinghua.edu.cn")))
+            {
+                manager.DeleteCookie(cookie);
+            }
+        }
+
         //private async Task<bool> checkLoginState()
         //{
         //    return true;

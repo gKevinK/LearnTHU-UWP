@@ -27,7 +27,8 @@ namespace LearnTHU.Model
         {
             Regex regex = new Regex("");
             Course course = new Course();
-            return course;
+
+            throw new NotImplementedException();
         }
 
         public static List<Course> ParseHtmlList(string html)
@@ -57,10 +58,18 @@ namespace LearnTHU.Model
             return list;
         }
 
-        public static Course ParseJson(string json)
+        public static Course ParseJson(JsonObject json)
         {
             Course course = new Course();
+            course.ID = json.GetNamedString("ID");
             return course;
+        }
+
+        public JsonObject ToJsonObject()
+        {
+            var obj = new JsonObject();
+            obj["ID"] = JsonValue.CreateStringValue(ID);
+            return obj;
         }
 
         public static Course LoadJson(string json)

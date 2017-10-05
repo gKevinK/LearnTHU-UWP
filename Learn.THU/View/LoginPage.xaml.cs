@@ -41,7 +41,8 @@ namespace LearnTHU.View
                     var vault = new Windows.Security.Credentials.PasswordVault();
                     vault.Add(new Windows.Security.Credentials.PasswordCredential(
                         "LearnTHU", UserID.Text, Passwd.Password));
-                    new MainModel();
+                    UserID.Text = string.Empty;
+                    Passwd.Password = string.Empty;
                     ((Frame)Window.Current.Content).Navigate(typeof(MainPage));
                     ((Frame)Window.Current.Content).BackStack.Clear();
                     return;

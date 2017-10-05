@@ -8,6 +8,36 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
+        <Pivot>
+            <PivotItem Header="选项">
+                <StackPanel Padding="12" MaxWidth="800">
+                    <Grid Padding="12">
+                        <TextBlock Text="已登录帐号：" VerticalAlignment="Center"></TextBlock>
+                        <TextBlock x:Name="UserId" Text="..." Margin="100,0"></TextBlock>
+                        <Button Click="Button_Click" HorizontalAlignment="Right">退出登录</Button>
+                    </Grid>
+                    <Grid Padding="12">
+                        <TextBlock Text="自动下载文件上限：" VerticalAlignment="Center"></TextBlock>
+                        <TextBlock Text="..." Margin="100,12,0,12" Padding="48,0,0,0"></TextBlock>
+                    </Grid>
+                    
+                </StackPanel>
+            </PivotItem>
+            <PivotItem Header="课程">
+                
+            </PivotItem>
+            <PivotItem Header="关于">
+                <StackPanel VerticalAlignment="Center" Orientation="Vertical" HorizontalAlignment="Center">
+                    <Image Source="/Assets/LogoGreen2.png" Width="150" Margin="0,48,0,0" ></Image>
+                    <TextBlock Text="Learn@THU" HorizontalAlignment="Center" Margin="0,48,0,0" FontSize="26.667" FontWeight="Bold"/>
+                    <TextBlock Text="Version 1.2" HorizontalAlignment="Center" Margin="0"></TextBlock>
+                    <TextBlock Text="清华大学网络学堂的一个客户端" HorizontalAlignment="Center" Margin="0,24,0,0"></TextBlock>
+                    <TextBlock Text="按照 MIT 协议开源" HorizontalAlignment="Center" Margin="0,12,0,0"></TextBlock>
+                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Margin="0,0">
+                        <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/gKevinK/LearnTHU-UWP"></HyperlinkButton>
+                    </StackPanel>
+                </StackPanel>
+            </PivotItem>
+        </Pivot>
     </Grid>
 </Page>

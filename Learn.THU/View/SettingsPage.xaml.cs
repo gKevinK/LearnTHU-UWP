@@ -13,6 +13,8 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
+using LearnTHU.Model;
+
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 
 namespace LearnTHU.View
@@ -25,6 +27,29 @@ namespace LearnTHU.View
         public SettingsPage()
         {
             this.InitializeComponent();
+            this.Loaded += OnLoad;
+        }
+
+        private void OnLoad(object sender, RoutedEventArgs e)
+        {
+            try {
+                var vault = new Windows.Security.Credentials.PasswordVault();
+                UserId.Text = vault.FindAllByResource("LearnTHU")[0].UserName;
+            } catch { }
+        }
+
+        private async void Button_Click(object sender, RoutedEventArgs e)
+        {
+            try {
+                await MainModel.Current.Save();
+                var vault = new Windows.Security.Credentials.PasswordVault();
+                foreach (var record in vault.FindAllByResource("LearnTHU"))
+                    vault.Remove(record);
+                await WebClient.Current.Logout();
+            } finally {
+                ((Frame)Window.Current.Content).Navigate(typeof(LoginPage));
+                ((Frame)Window.Current.Content).BackStack.Clear();
+            }
         }
     }
 }
