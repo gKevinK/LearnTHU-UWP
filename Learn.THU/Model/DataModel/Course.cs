@@ -18,8 +18,8 @@ namespace LearnTHU.Model
         public DateTime UpdateTime { get; set; }
 
         public List<Notice> NoticeList { get; set; } = new List<Notice>();
-        public List<Work> WorkList { get; set; } = new List<Work>();
-        public List<File> FileList { get; set; } = new List<File>();
+        public List<Assignment> WorkList { get; set; } = new List<Assignment>();
+        public List<Courseware> FileList { get; set; } = new List<Courseware>();
 
         public Course() { }
 
@@ -34,7 +34,7 @@ namespace LearnTHU.Model
         public static List<Course> ParseHtmlList(string html)
         {
             List<Course> list = new List<Course>();
-            string pattern = @"href=""(.+)"" target=""_blank"">
+            string pattern = @"href=""(.+)"" target.+
 (.*)\(.+?\)\(.+?\)</a>.+
 .+text"">(.+)</span>.+
 .+text"">(.+)</span>.+
@@ -62,13 +62,16 @@ namespace LearnTHU.Model
         {
             Course course = new Course();
             course.ID = json.GetNamedString("ID");
+            course.Name = json.GetNamedString("Name");
             return course;
         }
 
         public JsonObject ToJsonObject()
         {
-            var obj = new JsonObject();
-            obj["ID"] = JsonValue.CreateStringValue(ID);
+            var obj = new JsonObject {
+                ["ID"] = JsonValue.CreateStringValue(ID),
+                ["Name"] = JsonValue.CreateStringValue(Name),
+            };
             return obj;
         }
 

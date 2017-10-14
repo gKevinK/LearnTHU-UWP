@@ -14,5 +14,19 @@ namespace LearnTHU.Model
         public DateTime Date { get; set; }
         public bool IsRead { get; set; }
         public string Content { get; set; }
+
+        public static Notice ParseHtml(string html)
+        {
+            Notice notice = new Notice();
+
+            return notice;
+        }
+
+        public static Notice LoadJson(string json)
+        {
+            Notice notice = new Notice();
+
+            return notice;
+        }
     }
 }

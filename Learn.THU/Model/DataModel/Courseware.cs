@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LearnTHU.Model
 {
-    class File
+    class Courseware
     {
         public string ID { get; set; }
         public string Url { get; set; }

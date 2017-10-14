@@ -6,22 +6,16 @@
     xmlns:v="using:LearnTHU.View"
     RequestedTheme="Light">
     <Application.Resources>
-        <Style x:Key="splitViewToggleButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
-            <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}" />
-            <Setter Property="Content" Value="&#xE700;" />
-            <Setter Property="FontSize" Value="20" />
-            <Setter Property="Height" Value="48" />
-            <Setter Property="Width" Value="48" />
-        </Style>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/View/Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
 
-        <v:IntToBoolConverter x:Key="IntToBool"/>
-        <v:WorkStatusConverter x:Key="WorkStatus"/>
-        <v:DoubleToFileSizeConverter x:Key="DoubleToFileSize"/>
-        <v:BoolToVisibilityConverter x:Key="BoolToVisibility"/>
+            <v:IntToBoolConverter x:Key="IntToBool"/>
+            <v:WorkStatusConverter x:Key="WorkStatus"/>
+            <v:DoubleToFileSizeConverter x:Key="DoubleToFileSize"/>
+            <v:BoolToVisibilityConverter x:Key="BoolToVisibility"/>
+        </ResourceDictionary>
     </Application.Resources>
 
 </Application>

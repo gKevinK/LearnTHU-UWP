@@ -17,6 +17,15 @@
                         <Button Click="Button_Click" HorizontalAlignment="Right">退出登录</Button>
                     </Grid>
                     <Grid Padding="12">
+                        <TextBlock Text="自动更新频率" VerticalAlignment="Center"></TextBlock>
+                        <ComboBox HorizontalAlignment="Right">
+                            <ComboBox.Items>
+                                <ComboBoxItem Content="2 小时" />
+                                <ComboBoxItem Content="不自动更新" />
+                            </ComboBox.Items>
+                        </ComboBox>
+                    </Grid>
+                    <Grid Padding="12">
                         <TextBlock Text="自动下载文件上限：" VerticalAlignment="Center"></TextBlock>
                         <TextBlock Text="..." Margin="100,12,0,12" Padding="48,0,0,0"></TextBlock>
                     </Grid>

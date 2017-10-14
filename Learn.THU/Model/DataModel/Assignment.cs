@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LearnTHU.Model
 {
-    class Work
+    class Assignment
     {
         public string ID { get; set; }
         public string Title { get; set; }

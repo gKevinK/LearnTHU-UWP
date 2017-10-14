@@ -3,9 +3,29 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:LearnTHU.View"
+    xmlns:vm="using:LearnTHU.ViewModel"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
+
+    <Page.Resources>
+        <DataTemplate x:Key="NavMenuCourseItemTemplate" x:DataType="vm:CourseViewModel">
+            <Grid Height="40" Width="280">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="48" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="32" />
+                    <ColumnDefinition Width="32" />
+                    <ColumnDefinition Width="32" />
+                </Grid.ColumnDefinitions>
+                <Ellipse Fill="{ThemeResource SystemControlForegroundBaseHighBrush}" Width="8" Height="8" />
+                <TextBlock Grid.Column="1" Text="{x:Bind Name}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                <TextBlock Grid.Column="2" Text="{x:Bind NewNotice}" Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="3" Text="{x:Bind NewCourseware}" Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="4" Text="{x:Bind NewAssignment}" Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <VisualStateManager.VisualStateGroups>
@@ -29,14 +49,47 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
+        <ToggleButton x:Name="togglePaneButton" Canvas.ZIndex="100" TabIndex="1"
+                      Style="{StaticResource SplitViewTogglePaneButtonStyle}"
+                      IsChecked="{Binding IsPaneOpen, ElementName=RootSplitView, Mode=TwoWay}"
+                      ToolTipService.ToolTip="导航"/>
+
         <SplitView x:Name="splitView" DisplayMode="CompactInline" IsPaneOpen="True" OpenPaneLength="280">
             <SplitView.Pane>
                 <Grid>
-                    
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+
+                    <Rectangle Grid.Row="1" Grid.ColumnSpan="3"
+                               Height="1" Margin="4"
+                               Fill="{ThemeResource SystemControlForegroundListLowBrush}" />
+                    <Grid Grid.Row="2">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Button Style="{StaticResource SplitViewNavButtonStyle}" Click="Button_Click">
+                            <SymbolIcon Symbol="Setting" />
+                        </Button>
+                    </Grid>
                 </Grid>
             </SplitView.Pane>
 
-            <Frame x:Name="mainFrame"/>
+            <Frame x:Name="mainFrame">
+                <Frame.ContentTransitions>
+                    <TransitionCollection>
+                        <NavigationThemeTransition>
+                            <NavigationThemeTransition.DefaultNavigationTransitionInfo>
+                                <EntranceNavigationTransitionInfo/>
+                            </NavigationThemeTransition.DefaultNavigationTransitionInfo>
+                        </NavigationThemeTransition>
+                    </TransitionCollection>
+                </Frame.ContentTransitions>
+            </Frame>
         </SplitView>
     </Grid>
 </Page>

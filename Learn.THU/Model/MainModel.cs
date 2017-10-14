@@ -20,7 +20,6 @@ namespace LearnTHU.Model
             }
         }
 
-        List<Course> courses;
         public List<Course> Courses { get; }
 
         public MainModel() { }
@@ -39,7 +38,7 @@ namespace LearnTHU.Model
             JsonArray jsonArr = jsonObj.GetNamedArray("courses");
             foreach (IJsonValue obj in jsonArr) {
                 if (obj.ValueType == JsonValueType.Object) {
-                    courses.Add(Course.ParseJson(obj.GetObject()));
+                    Courses.Add(Course.ParseJson(obj.GetObject()));
                 }
             }
         }

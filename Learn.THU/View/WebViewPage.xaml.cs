@@ -13,8 +13,6 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-using LearnTHU.ViewModel;
-
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 
 namespace LearnTHU.View
@@ -22,18 +20,11 @@ namespace LearnTHU.View
     /// <summary>
     /// 可用于自身或导航至 Frame 内部的空白页。
     /// </summary>
-    public sealed partial class MainPage : Page
+    public sealed partial class WebViewPage : Page
     {
-        public MainPage()
+        public WebViewPage()
         {
             this.InitializeComponent();
-            NavigationCacheMode = NavigationCacheMode.Enabled;
-
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            mainFrame.Navigate(typeof(SettingsPage));
         }
     }
 }
