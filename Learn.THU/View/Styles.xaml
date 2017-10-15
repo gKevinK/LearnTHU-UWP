@@ -3,12 +3,12 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:LearnTHU.View">
 
-    <Style x:Key="SplitViewTogglePaneButtonStyle" TargetType="ToggleButton">
+    <Style x:Key="SplitViewTogglePaneButtonStyle" TargetType="Button">
         <Setter Property="FontSize" Value="16" />
         <Setter Property="FontFamily" Value="{StaticResource SymbolThemeFontFamily}" />
         <Setter Property="MinHeight" Value="48" />
         <Setter Property="MinWidth" Value="48" />
-        <Setter Property="Margin" Value="0,4,0,0" />
+        <!--<Setter Property="Margin" Value="0,4,0,0" />-->
         <Setter Property="Padding" Value="0" />
         <Setter Property="HorizontalAlignment" Value="Left" />
         <Setter Property="VerticalAlignment" Value="Top" />
@@ -19,6 +19,8 @@
         <Setter Property="Content" Value="&#xE700;" />
         <Setter Property="AutomationProperties.Name" Value="Navigation" />
         <Setter Property="UseSystemFocusVisuals" Value="True" />
+        <!--<Setter Property="FocusVisualMargin" Value="0" />-->
+        <Setter Property="BorderThickness" Value="0" />
         <!--TODO : Add animation-->
     </Style>
 
@@ -30,6 +32,9 @@
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="UseSystemFocusVisuals" Value="True"/>
+        <!--<Setter Property="FocusVisualMargin" Value="0" />-->
+        <Setter Property="BorderThickness" Value="0" />
     </Style>
-
+    
+    
 </ResourceDictionary>

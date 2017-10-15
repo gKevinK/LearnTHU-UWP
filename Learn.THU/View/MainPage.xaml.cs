@@ -35,5 +35,25 @@ namespace LearnTHU.View
         {
             mainFrame.Navigate(typeof(SettingsPage));
         }
+
+        private void togglePaneButton_Click(object sender, RoutedEventArgs e)
+        {
+            splitView.IsPaneOpen = !splitView.IsPaneOpen;
+        }
+
+
+    }
+
+    public class IsPaneOpenToOrientationConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            return (bool)value ? Orientation.Horizontal : Orientation.Vertical;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

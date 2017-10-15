@@ -11,9 +11,9 @@
                 <ResourceDictionary Source="/View/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
+            <v:InvBoolConverter x:Key="InvBool" />
             <v:IntToBoolConverter x:Key="IntToBool"/>
             <v:WorkStatusConverter x:Key="WorkStatus"/>
-            <v:DoubleToFileSizeConverter x:Key="DoubleToFileSize"/>
             <v:BoolToVisibilityConverter x:Key="BoolToVisibility"/>
         </ResourceDictionary>
     </Application.Resources>

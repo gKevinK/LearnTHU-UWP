@@ -9,6 +9,8 @@
     mc:Ignorable="d">
 
     <Page.Resources>
+        <local:IsPaneOpenToOrientationConverter x:Key="IsPaneOpenToOrientation" />
+        
         <DataTemplate x:Key="NavMenuCourseItemTemplate" x:DataType="vm:CourseViewModel">
             <Grid Height="40" Width="280">
                 <Grid.ColumnDefinitions>
@@ -47,14 +49,33 @@
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
+            <VisualStateGroup>
+                <!--<VisualState>
+                    <VisualState.StateTriggers>
+                        <StateTrigger IsActive="{Binding ElementName=splitView, Path=IsPaneOpen, Mode=OneWay}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="navButtonStack.Orientation" Value="Horizontal" />
+                        <Setter Target="navButtonStack.HorizontalAlignment" Value="Right" />
+                    </VisualState.Setters>
+                </VisualState>-->
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <StateTrigger IsActive="{Binding ElementName=splitView, Path=IsPaneOpen, Mode=OneWay, Converter={StaticResource InvBool}}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="navButtonStack.Orientation" Value="Vertical" />
+                        <Setter Target="navButtonStack.HorizontalAlignment" Value="Left" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
-        <ToggleButton x:Name="togglePaneButton" Canvas.ZIndex="100" TabIndex="1"
-                      Style="{StaticResource SplitViewTogglePaneButtonStyle}"
-                      IsChecked="{Binding IsPaneOpen, ElementName=RootSplitView, Mode=TwoWay}"
-                      ToolTipService.ToolTip="导航"/>
+        <Button x:Name="togglePaneButton" Canvas.ZIndex="100" TabIndex="1"
+                Style="{StaticResource SplitViewTogglePaneButtonStyle}"
+                Click="togglePaneButton_Click"/>
 
-        <SplitView x:Name="splitView" DisplayMode="CompactInline" IsPaneOpen="True" OpenPaneLength="280">
+        <SplitView x:Name="splitView" DisplayMode="CompactInline" IsPaneOpen="False" OpenPaneLength="280">
             <SplitView.Pane>
                 <Grid>
                     <Grid.RowDefinitions>
@@ -63,6 +84,10 @@
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
+                    <TextBlock Text="Learn@THU" VerticalAlignment="Center" HorizontalAlignment="Center"
+                               FontSize="20" FontStyle="Italic" FontWeight="SemiBold"></TextBlock>
+
+                    <ListView ItemTemplate="{StaticResource NavMenuCourseItemTemplate}"/>
 
                     <Rectangle Grid.Row="1" Grid.ColumnSpan="3"
                                Height="1" Margin="4"
@@ -72,9 +97,20 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <Button Style="{StaticResource SplitViewNavButtonStyle}" Click="Button_Click">
-                            <SymbolIcon Symbol="Setting" />
-                        </Button>
+                        <StackPanel x:Name="navButtonStack" Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Style="{StaticResource SplitViewNavButtonStyle}" ToolTipService.ToolTip="网络学堂网页">
+                                <SymbolIcon Symbol="Page2" />
+                            </Button>
+                            <Button Style="{StaticResource SplitViewNavButtonStyle}" ToolTipService.ToolTip="未交作业列表">
+                                <SymbolIcon Symbol="List" />
+                            </Button>
+                            <Button Style="{StaticResource SplitViewNavButtonStyle}" ToolTipService.ToolTip="下载列表">
+                                <SymbolIcon Symbol="Download" />
+                            </Button>
+                            <Button Style="{StaticResource SplitViewNavButtonStyle}" ToolTipService.ToolTip="设置" Click="Button_Click">
+                                <SymbolIcon Symbol="Setting" />
+                            </Button>
+                        </StackPanel>
                     </Grid>
                 </Grid>
             </SplitView.Pane>
